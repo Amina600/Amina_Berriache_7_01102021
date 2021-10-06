@@ -10,17 +10,17 @@
                 <div v-on:click="toggleRegister" class="btn-close btn "></div>
             </div>
             
-            <form action="">
+            <form @submit.prevent="handleSubmit">
                 <div class="form-group">
-                    <input type="text" id="pseudo" class="form-control" placeholder="Pseudo">
+                    <input type="text" id="pseudo" class="form-control" v-model="pseudo" placeholder="Pseudo">
                 </div>
                 <div class="form-group">
-                    <input type="email" id="email" class="form-control" placeholder="Adresse e-mail">
+                    <input type="email" id="email" class="form-control" v-model="email"  placeholder="Adresse e-mail">
                 </div>
                 <div class="form-group">
-                    <input type="password" id="password" class="form-control" placeholder="Mot de passe">
+                    <input type="password" id="password" class="form-control"  v-model="password" placeholder="Mot de passe">
                 </div>
-                <div type="button" class="btn-register btn-primary">S'inscrire</div>
+                <button class="btn-register btn-primary">S'inscrire</button>
             </form>
 
         </div>
@@ -29,11 +29,29 @@
 
 
 <script>
+    //import axios from 'axios'
+    export default{
+        name: 'Register',
+        props: ['revele', 'toggleRegister'],
+        data() {
+            return {
+                pseudo: '',
+                email: '',
+                password: ''
+            }
+        }
+        //methods: {
+            //async handleSubmit(){
 
-export default{
-    name: 'Register',
-    props: ['revele', 'toggleRegister']
-}
+                //const response = await axios.post('auth/signup', {
+                   // pseudo: this.pseudo,
+                   // email: this.email,
+                   // password: this.password
+                //})    
+            //}
+        //}
+    }
+
 </script>
 
 <style scoped lang="scss">
@@ -95,6 +113,8 @@ export default{
             padding: 10px;
             font-size: 1.1em;
             font-weight: 600;
+            width: 100%;
+            border: none;
             background-color:#ff7e6b;
             &:hover{
                 background-color: #fc643c;
