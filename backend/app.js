@@ -3,8 +3,9 @@ require('dotenv').config();
 const express = require('express');
 //Importer package body-parser pour extraire l'objet JSON.
 const bodyParser = require('body-parser');
-require ('./models/user');
-
+const userModel= require ('./models/user');
+const userRoutes = require('./routes/user');
+const user = require('./models/user');
 
 const app = express();
 
@@ -17,7 +18,7 @@ app.use((req, res, next) => {
 });
 //Middleware qui transforme le corps de la requete en objet js utilisable
 app.use(bodyParser.json());
-
+app.use('/api/auth', userRoutes);
 
 // export de app et pouvoir y acceder depuis les autres fichiers js
 module.exports = app;

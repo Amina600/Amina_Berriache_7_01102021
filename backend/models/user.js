@@ -1,9 +1,37 @@
-const db = require ('../database');
+const { Sequelize, Model } = require("sequelize");
+const sequelize = require("../database");
 
+class User extends Model { }
+User.init(
+    {
+        id: {
+            primaryKey: true,
+            allowNull: false,
+            autoIncrement: true,
+            type: Sequelize.INTEGER,
+        },
+        email: {
+            unique: true,
+            allowNull: false,
+            type: Sequelize.STRING,
+        },
+        pseudo: {
+            allowNull: false,
+            type: Sequelize.STRING,
+        },
+        password: {
+            allowNull: false,
+            type: Sequelize.STRING,
+        },
+        isAdmin: {
+            allowNull: false,
+            type: Sequelize.BOOLEAN,
+        },
+    },
+    {
+        sequelize, // We need to pass the connection instance
+        modelName: "User",
+    }
+);
 
-db.query('CREATE TABLE IF NOT EXISTS Users (id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,pseudo VARCHAR(30),email VARCHAR(255) NOT NULL UNIQUE, password BINARY(60));',
- function(err) {
-    if (err) throw err;
-    console.log('Users TABLE created');
-  
-});
+User.sync({alter: true});
