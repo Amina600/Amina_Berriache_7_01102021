@@ -29,7 +29,7 @@
 
 
 <script>
-    //import axios from 'axios'
+    import axios from 'axios'
     export default{
         name: 'Register',
         props: ['revele', 'toggleRegister'],
@@ -39,17 +39,21 @@
                 email: '',
                 password: ''
             }
-        }
-        //methods: {
-            //async handleSubmit(){
+        },
+        methods: {
+            async handleSubmit(){
 
-                //const response = await axios.post('auth/signup', {
-                   // pseudo: this.pseudo,
-                   // email: this.email,
-                   // password: this.password
-                //})    
-            //}
-        //}
+                const response = await axios.post('auth/signup', {
+                   pseudo: this.pseudo,
+                   email: this.email,
+                   password: this.password
+                })  
+                console.log(response)
+                
+                //this.$router.push('./')  
+            }
+            
+        }
     }
 
 </script>
