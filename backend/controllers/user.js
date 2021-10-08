@@ -3,7 +3,6 @@ const bcrypt = require('bcrypt');
 const cryptoJS = require("crypto-js");
 const jwt = require('jsonwebtoken');
 const sequelize = require('../database');
-const userModel = require('../models/user');
 
 //Clé secrète pour l'email
 var key = cryptoJS.enc.Hex.parse(process.env.SECRET_TOKEN);
@@ -16,9 +15,11 @@ const encryptEmail = (string) => {
 };
 
 exports.signup = (req, res, next) => {
-
+  if(req.body.password.length < 6 || req.body.password.length > 250){
+    res.status(400).json({ message: 'Mot de passe invalide !' });
+    return;
+  }
   const body = req.body;
-
   bcrypt.hash(body.password, 10)
     .then(hash => {
       const user = {
@@ -37,22 +38,25 @@ exports.signup = (req, res, next) => {
     }); 
 };
 
-/*exports.login = (req, res, next) => {
-  const body = req.body;
-  sequelize.models.User.findOne({email: encryptEmail(body.email)})
-    .then(user => {
+exports.login = (req, res, next) => {
+
+  sequelize.models.User.findOne({
+    where : {
+      email: encryptEmail(req.body.email)
+    }
+  }).then(user => {
       if (!user) {
         return res.status(401).json({ error: 'Utilisateur non trouvé !' });
       }
-      bcrypt.compare(body.password, user.password)
+      bcrypt.compare(req.body.password, user.password)
         .then(valid => {
           if (!valid) {
             return res.status(401).json({ error: 'Mot de passe incorrect !' });
           }
           res.status(200).json({
-            id: user._id,
+            userId: user.id,
             token: jwt.sign(
-              { id: user._id },
+              { userId: user.id },
               process.env.SECRET_TOKEN,
               { expiresIn: '24h' }
             )
@@ -61,4 +65,4 @@ exports.signup = (req, res, next) => {
         .catch(error => res.status(500).json({ error }));
     })
   .catch(error => res.status(500).json({ error }));
-};*/
+};
