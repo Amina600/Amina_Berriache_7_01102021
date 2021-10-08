@@ -12,14 +12,27 @@
             
             <form @submit.prevent="handleSubmit">
                 <div class="form-group">
-                    <input type="text" id="pseudo" class="form-control" v-model="pseudo" placeholder="Pseudo">
+                    <input type="text" id="pseudo" :class="{'is-invalid': validationsStatus(v$.pseudo)}" class="form-control" v-model.trim="v$.pseudo.$model" placeholder="Pseudo">
+                    <div v-for ="error of v$.pseudo.$errors" :key="error.$uid" class="error">
+                        <span >{{error.$message}}</span>
+                    </div>
                 </div>
+                
                 <div class="form-group">
-                    <input type="email" id="email" class="form-control" v-model="email"  placeholder="Adresse e-mail">
+                    <input type="email" id="email" :class="{'is-invalid': validationsStatus(v$.email)}" class="form-control" v-model.trim="v$.email.$model"  placeholder="Adresse e-mail">
+                    <div v-for ="error of v$.email.$errors" :key="error.$uid" class="error">
+                        <span>{{error.$message}}</span>
+                    </div>
                 </div>
+                
                 <div class="form-group">
-                    <input type="password" id="password" class="form-control"  v-model="password" placeholder="Mot de passe">
+                    <input type="password" id="password" :class="{'is-invalid': validationsStatus(v$.password)}" class="form-control"  v-model.trim="v$.password.$model" placeholder="Mot de passe">
+                    <div v-for ="error of v$.password.$errors" :key="error.$uid" class="error">
+                        <span>{{error.$message}}</span>
+                    </div>
                 </div>
+                
+                
                 <button class="btn-register btn-primary">S'inscrire</button>
             </form>
 
@@ -30,30 +43,59 @@
 
 <script>
     import axios from 'axios'
+    import useVuelidate from '@vuelidate/core'
+    import { required, email, minLength, maxLength, helpers } from '@vuelidate/validators'
+
     export default{
         name: 'Register',
         props: ['revele', 'toggleRegister'],
-        data() {
+        setup () {
+            return { v$: useVuelidate() }
+        },
+        data: function() {
             return {
                 pseudo: '',
                 email: '',
                 password: ''
             }
         },
+        validations: {
+            pseudo: { 
+                required: helpers.withMessage('Ce champs est obligatoire !', required)
+                },
+            email: { 
+                required: helpers.withMessage('Ce champs est obligatoire !', required),
+                email: helpers.withMessage('Cet email est invalide !', email)
+            },
+            password: { 
+                required: helpers.withMessage('Ce champs est obligatoire !', required),
+                minLength:  helpers.withMessage('6 caractères minimum',minLength(6)), 
+                maxLength:  helpers.withMessage('10 caractères maximum',maxLength(10)) 
+            }
+
+        },
+        
         methods: {
+            validationsStatus: function(validation){
+                return typeof validation != "undefined" ? validation.$error : false
+            },
+
             async handleSubmit(){
 
-                const response = await axios.post('auth/signup', {
+                const isFormCorrect = await this.v$.$validate();
+
+                if (!isFormCorrect) return;
+
+                await axios.post('auth/signup', {
                    pseudo: this.pseudo,
                    email: this.email,
                    password: this.password
-                })  
-                console.log(response)
+                }) 
                 
-                //this.$router.push('./')  
-            }
-            
+                this.toggleRegister();
+            } 
         }
+        
     }
 
 </script>
@@ -89,7 +131,6 @@
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            margin-bottom: 30px;
             border-bottom: 0.2px solid rgb(212, 208, 208);
             width: 100%;
             .btn-close {
@@ -100,10 +141,11 @@
             }
 
         }.form-group{
-            margin-bottom: 20px;
+            margin-bottom: 35px;
             input{
                 background-color: rgb(247, 247, 247);
                 padding: 10px;
+                
             }::placeholder{
                 color: rgb(172, 168, 168);
                 font-size: 1em;
@@ -111,7 +153,7 @@
             }
             
         }.btn-register{
-            margin-top: 50px;
+            margin-top: 15px;
             margin-bottom: 25px;
             border-radius: 3px;
             padding: 10px;
@@ -123,6 +165,12 @@
             &:hover{
                 background-color: #fc643c;
             }
+        }.error{
+            color: rgb(190, 8, 8);
+            font-size: 0.85em;
+            vertical-align: top;
+            text-align: left;
+            margin-top: 5px;
         }
     }
 

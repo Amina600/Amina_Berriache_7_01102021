@@ -38,7 +38,7 @@
 
 <script>
     import Register from './Register.vue'
-     //import axios from 'axios'
+    import axios from 'axios'
 
     export default {
         name: 'Login',
@@ -54,15 +54,18 @@
         },
         methods: {
             toggleRegister: function() {
-            this.revele = !this.revele;
-            }
-            //async handleSubmit(){
+                this.revele = !this.revele;
+            },
+            async handleSubmit(){
 
-                //const response = await axios.post('auth/login', {
-                   // email: this.email,
-                   // password: this.password
-                //})    
-            //}
+                const response = await axios.post('auth/login', {
+                    email: this.email,
+                    password: this.password
+                
+                }) 
+                console.log(response)
+               //localStorage.setItem('login', response.data.token)
+            }
         }
 
     }
