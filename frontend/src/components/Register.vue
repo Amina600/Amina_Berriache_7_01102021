@@ -32,7 +32,10 @@
                     </div>
                 </div>
                 
-                
+                <div v-if="signuUpFailed" class="error2">
+                    <span>Identifiants est déjà pris</span>
+                </div>
+
                 <button class="btn-register btn-primary">S'inscrire</button>
             </form>
 
@@ -56,7 +59,8 @@
             return {
                 pseudo: '',
                 email: '',
-                password: ''
+                password: '',
+                signuUpFailed: false
             }
         },
         validations: {
@@ -83,16 +87,21 @@
             async handleSubmit(){
 
                 const isFormCorrect = await this.v$.$validate();
-
+                console.log(this.v$.$errors)
                 if (!isFormCorrect) return;
 
-                await axios.post('auth/signup', {
-                   pseudo: this.pseudo,
-                   email: this.email,
-                   password: this.password
-                }) 
+                try {
+                    await axios.post('auth/signup', {
+                    pseudo: this.pseudo,
+                    email: this.email,
+                    password: this.password
+                    }) 
+                    this.toggleRegister();
+                } catch(error) {
+                    this.signuUpFailed = true;
+                }
                 
-                this.toggleRegister();
+                
             } 
         }
         
@@ -171,6 +180,13 @@
             vertical-align: top;
             text-align: left;
             margin-top: 5px;
+        }.error2{
+            color: rgb(190, 8, 8);
+            font-size: 0.85em;
+            vertical-align: top;
+            text-align: center;
+            margin-bottom: 20px;
+            
         }
     }
 

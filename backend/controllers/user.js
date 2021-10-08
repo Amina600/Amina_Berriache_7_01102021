@@ -55,6 +55,7 @@ exports.login = (req, res, next) => {
           }
           res.status(200).json({
             userId: user.id,
+            pseudo: user.pseudo,
             token: jwt.sign(
               { userId: user.id },
               process.env.SECRET_TOKEN,

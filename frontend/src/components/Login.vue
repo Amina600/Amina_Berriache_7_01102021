@@ -15,16 +15,25 @@
                     <div class="card">
                         <form  @submit.prevent="handleSubmit">
                             <div class="form-group">
-                                <input type="email" id="email" class="form-control" v-model="email" placeholder="Adresse e-mail">
+                                <input type="email" id="email" class="form-control" :class="{'is-invalid': validationsStatus(v$.loginEmail)}" v-model.trim="v$.loginEmail.$model" placeholder="Adresse e-mail">
+                                <div v-for ="error of v$.loginEmail.$errors" :key="error.$uid" class="error">
+                                    <span>{{error.$message}}</span>
+                                </div>
                             </div>
                             <div class="form-group">
-                                <input type="password" id="password" class="form-control" v-model="password" placeholder="Mot de passe">
+                                <input type="password" id="password" class="form-control" :class="{'is-invalid': validationsStatus(v$.loginPassword)}" v-model.trim="v$.loginPassword.$model" placeholder="Mot de passe">
+                                <div v-for ="error of v$.loginPassword.$errors" :key="error.$uid" class="error">
+                                    <span>{{error.$message}}</span>
+                                </div>
+                            </div>
+                            <div v-if="loginFail" class="error2">
+                                <span>Identifiants incorrects</span>
                             </div>
                             <button class="btn-connect btn-primary">Se connecter</button>
                         </form>
                         <div class="group">
                             <div class="border-separate"></div>
-                            <register :revele="revele" :toggleRegister="toggleRegister"></register>
+                            <Register :revele="revele" :toggleRegister="toggleRegister"></Register>
                             <button v-on:click="toggleRegister" class="btn-register btn-success">Créer nouveau compte</button>
                         </div>
                     </div>
@@ -39,31 +48,65 @@
 <script>
     import Register from './Register.vue'
     import axios from 'axios'
+    import useVuelidate from '@vuelidate/core'
+    import { required, email, helpers } from '@vuelidate/validators'
 
     export default {
         name: 'Login',
+        setup () {
+            return { v$: useVuelidate() }
+        },
         data() {
             return {
                 revele: false,
-                email: '',
-                password: ''
+                loginEmail: '',
+                loginPassword: '',
+                loginFail: false
             };
         },
         components: {
-            'register': Register
+            'Register': Register
+        },
+        validations: {
+            loginEmail: { 
+                required: helpers.withMessage('Ce champs est obligatoire !', required),
+                email: helpers.withMessage('Cet email est invalide !', email)
+            },
+            loginPassword: { 
+                required: helpers.withMessage('Ce champs est obligatoire !', required),
+            }
+
         },
         methods: {
             toggleRegister: function() {
                 this.revele = !this.revele;
             },
+            validationsStatus: function(validation){
+                return typeof validation != "undefined" ? validation.$error : false
+            },
+
             async handleSubmit(){
 
-                const response = await axios.post('auth/login', {
-                    email: this.email,
-                    password: this.password
+                this.v$.loginEmail.$touch();
+                this.v$.loginPassword.$touch();
+                const isFormCorrect = !this.v$.loginEmail.$invalid && !this.v$.loginPassword.$invalid;
+                if (!isFormCorrect) return;
                 
-                }) 
-                console.log(response)
+                try {
+                    const response = await axios.post('auth/login', {
+                        email: this.loginEmail,
+                        password: this.loginPassword
+                
+                    })
+                    console.log(response)
+                }
+                catch (error) {
+                    this.loginFail = true;
+                }
+               
+                
+                
+                
                //localStorage.setItem('login', response.data.token)
             }
         }
@@ -107,6 +150,12 @@
                 color: rgb(172, 168, 168);
                 font-size: 1em;
                 font-weight: 600;
+            }.error{
+                color: rgb(190, 8, 8);
+                font-size: 0.85em;
+                vertical-align: top;
+                text-align: left;
+                margin-top: 5px;
             }
         }.btn-connect{
             margin-top: 15px;
@@ -146,6 +195,13 @@
                     background-color: #fc643c;
                 }
             }
+        }.error2{
+            color: rgb(190, 8, 8);
+            font-size: 0.85em;
+            vertical-align: top;
+            text-align: center;
+            margin-top: 5px;
+            margin-bottom: 10px;
         }
         
     }
