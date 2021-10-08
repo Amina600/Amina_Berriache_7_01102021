@@ -32,8 +32,8 @@
                     </div>
                 </div>
                 
-                <div v-if="signuUpFailed" class="error2">
-                    <span>Identifiants est déjà pris</span>
+                <div v-if="signuUpError" class="error2">
+                    <span>{{signuUpError}}</span>
                 </div>
 
                 <button class="btn-register btn-primary">S'inscrire</button>
@@ -60,7 +60,7 @@
                 pseudo: '',
                 email: '',
                 password: '',
-                signuUpFailed: false
+                signuUpError: null
             }
         },
         validations: {
@@ -98,7 +98,9 @@
                     }) 
                     this.toggleRegister();
                 } catch(error) {
-                    this.signuUpFailed = true;
+                    console.log(error.response)
+                    if(error.response.status == 400) this.signuUpError = error.response.data.message;
+                    else this.signuUpError = 'Une erreur s\'est produite'
                 }
                 
                 
@@ -142,6 +144,7 @@
             align-items: flex-start;
             border-bottom: 0.2px solid rgb(212, 208, 208);
             width: 100%;
+            margin-bottom: 35px;
             .btn-close {
                 font-size: 1.5em;
                 color: rgb(212, 208, 208);
@@ -150,7 +153,7 @@
             }
 
         }.form-group{
-            margin-bottom: 35px;
+            margin-bottom: 20px;
             input{
                 background-color: rgb(247, 247, 247);
                 padding: 10px;

@@ -14,12 +14,35 @@ const encryptEmail = (string) => {
   return enc;
 };
 
-exports.signup = (req, res, next) => {
-  if(req.body.password.length < 6 || req.body.password.length > 250){
+exports.signup = async (req, res, next) => {
+  const body = req.body;
+  //vérifier si le mot de passe 
+  if(body.password.length < 6 || body.password.length > 250){
     res.status(400).json({ message: 'Mot de passe invalide !' });
     return;
+  } 
+  //vérifier si le pseudo existe dans la base de donnée
+  const pseudoExists = await sequelize.models.User.findOne({ 
+    where: { 
+      pseudo: body.pseudo 
+    } 
+  });
+  //vérifier si l'email deja existe dans la base de donnée user
+  const emailExists = await sequelize.models.User.findOne({ 
+    where: { 
+      email: encryptEmail(body.email)
+    } 
+  });
+  
+  if (pseudoExists ) {
+     res.status(400).json({message:"ce pseudo est déjà pris !"});
+     return;
+  } else if (emailExists ) {
+     res.status(400).json({message:"Cet email est dèjà pris !"});
+     return;
   }
-  const body = req.body;
+
+  
   bcrypt.hash(body.password, 10)
     .then(hash => {
       const user = {
@@ -30,7 +53,7 @@ exports.signup = (req, res, next) => {
       };
       sequelize.models.User.create(user)
         .then(() => res.status(201).json({ message: 'Utilisateur créé !' }))
-        .catch(error => res.status(400).json({ error }));
+        .catch(error => res.status(500).json({ error }));
     })
     .catch(function(err) {
       res.status(500).json({ message: 'Error server' });
@@ -46,12 +69,12 @@ exports.login = (req, res, next) => {
     }
   }).then(user => {
       if (!user) {
-        return res.status(401).json({ error: 'Utilisateur non trouvé !' });
+        return res.status(400).json({ message: 'Utilisateur non trouvé !' });
       }
       bcrypt.compare(req.body.password, user.password)
         .then(valid => {
           if (!valid) {
-            return res.status(401).json({ error: 'Mot de passe incorrect !' });
+            return res.status(400).json({ message: 'Mot de passe incorrect !' });
           }
           res.status(200).json({
             userId: user.id,

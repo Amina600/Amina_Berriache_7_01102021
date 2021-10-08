@@ -26,8 +26,8 @@
                                     <span>{{error.$message}}</span>
                                 </div>
                             </div>
-                            <div v-if="loginFail" class="error2">
-                                <span>Identifiants incorrects</span>
+                            <div v-if="loginError" class="error2">
+                                <span>{{loginError}}</span>
                             </div>
                             <button class="btn-connect btn-primary">Se connecter</button>
                         </form>
@@ -61,7 +61,7 @@
                 revele: false,
                 loginEmail: '',
                 loginPassword: '',
-                loginFail: false
+                loginError: null
             };
         },
         components: {
@@ -86,12 +86,12 @@
             },
 
             async handleSubmit(){
-
+                //verification du formulaire 
                 this.v$.loginEmail.$touch();
                 this.v$.loginPassword.$touch();
                 const isFormCorrect = !this.v$.loginEmail.$invalid && !this.v$.loginPassword.$invalid;
                 if (!isFormCorrect) return;
-                
+                //requête
                 try {
                     const response = await axios.post('auth/login', {
                         email: this.loginEmail,
@@ -101,13 +101,12 @@
                     console.log(response)
                 }
                 catch (error) {
-                    this.loginFail = true;
+                    console.log(error.response)
+                    if(error.response.status == 400) this.loginError = error.response.data.message;
+                    else this.loginError = 'Une erreur s\'est produite'
                 }
+                
                
-                
-                
-                
-               //localStorage.setItem('login', response.data.token)
             }
         }
 
