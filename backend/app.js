@@ -1,11 +1,10 @@
 require('dotenv').config();
-//Importer express(permet d'ajouter une série de fonctions appelées middleware)
 const express = require('express');
-//Importer package body-parser pour extraire l'objet JSON.
 const bodyParser = require('body-parser');
-const userModel= require ('./models/user');
 const userRoutes = require('./routes/user');
-const user = require('./models/user');
+
+// Import des modèles pour création automatique des tables
+require('./models/user');
 
 const app = express();
 
@@ -20,5 +19,5 @@ app.use((req, res, next) => {
 app.use(bodyParser.json());
 app.use('/api/auth', userRoutes);
 
-// export de app et pouvoir y acceder depuis les autres fichiers js
+// export de app et pouvoir y accéder depuis les autres fichiers js
 module.exports = app;

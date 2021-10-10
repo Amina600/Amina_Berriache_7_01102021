@@ -1,7 +1,8 @@
-const { Sequelize, Model } = require("sequelize");
+const {Sequelize, Model} = require("sequelize");
 const sequelize = require("../database");
 
-class User extends Model { }
+class User extends Model {}
+
 User.init(
     {
         id: {
@@ -34,4 +35,4 @@ User.init(
     }
 );
 
-User.sync({alter: true});
+User.sync();
