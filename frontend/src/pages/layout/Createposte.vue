@@ -277,8 +277,8 @@
                             padding: 5px;
                             font-size: 1.1em;
                             font-weight: 600;
-                            width: 30%;
-                            border: none;
+                            width: 120px;
+                            border: 1px solid #f9abab;
                             background-color: #f9abab;
 
                             &:hover {

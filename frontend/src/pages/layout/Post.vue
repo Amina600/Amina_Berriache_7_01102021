@@ -56,12 +56,12 @@
                 </div>
 
                 <div class="flex">
-                    <font-awesome-icon class="icon-comment" icon="comment-alt"/>
+                    <font-awesome-icon v-on:click="toggleComment" class="icon-comment" icon="comment-alt"/>
                     <p class="up">2</p>
-                    <comments/>
                 </div>
 
             </div>
+            <comments v-if="showComments" :toggleComment="toggleComment"/>
         </div>
     </div>
     <div class="container">
@@ -85,12 +85,16 @@
         data() {
             return {
                 reveal: false,
+                showComments: false,
             }
         },
         methods: {
             // Toggle menu popup
             toggleMenu: function () {
                 this.reveal = !this.reveal;
+            },
+            toggleComment: function () {
+                this.showComments = !this.showComments;
             }
         }
     }
@@ -227,6 +231,7 @@
                         font-size: 1.3em;
                         font-weight: bolder;
                         margin-right: 5px;
+                        cursor: pointer;
 
                         &:hover {
                             color: forestgreen;
@@ -238,6 +243,7 @@
                         font-size: 1.3em;
                         font-weight: bolder;
                         margin-right: 5px;
+                        cursor: pointer;
 
                         &:hover {
                             color: #fc3c14;
@@ -250,6 +256,7 @@
                         font-size: 1.3em;
                         font-weight: bolder;
                         margin-right: 5px;
+                        cursor: pointer;
 
                         &:hover {
                             color: #E0909C;
@@ -271,6 +278,7 @@
                 color: #f9abab;
                 font-size: 2em;
                 font-weight: bolder;
+                cursor: pointer;
             }
         }
 
