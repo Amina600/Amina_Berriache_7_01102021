@@ -8,9 +8,9 @@
                         <div class="logo">
                             <ul>
                                 <li class="logo-photo">
-                                    <a class="" href="#">
+                                    <router-link to="/accueil">
                                         <img src="../../assets/icon-left-font.png" alt="logo de Groupomania">
-                                    </a>
+                                    </router-link>
                                 </li>
                                 <li>
                                     <router-link to="/accueil">Home</router-link>
@@ -20,11 +20,11 @@
                         <div class="menu">
                             <ul>
                                 <li>
-                                    <a>
+                                    <router-link to="/profile">
                                         <div class="profile">
                                             <font-awesome-icon icon="user"/>
                                         </div>
-                                    </a>
+                                    </router-link>
                                 </li>
                                 <li>
                                     <a href="javascript:void(0)" @click="handleLogout" class="icon-signOut">

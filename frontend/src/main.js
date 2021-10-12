@@ -15,6 +15,8 @@ import {faCommentAlt } from '@fortawesome/free-solid-svg-icons'
 import { faPlusCircle } from '@fortawesome/free-solid-svg-icons'
 import { faTrashAlt } from '@fortawesome/free-solid-svg-icons'
 import { faEllipsisV } from '@fortawesome/free-solid-svg-icons'
+import { faCogs } from '@fortawesome/free-solid-svg-icons'
+
 
 library.add(faSignOutAlt);
 library.add(faUser);
@@ -26,6 +28,8 @@ library.add(faCommentAlt);
 library.add(faPlusCircle);
 library.add(faTrashAlt);
 library.add(faEllipsisV);
+library.add(faCogs);
+
 
 
 

@@ -3,12 +3,17 @@
         <div class="row">
             <header>
                 <div class="user">
-                    <div class="profile">
-                        <font-awesome-icon class="icon-profile" icon="user"/>
-                    </div>
+                    <router-link to="/profile">
+                        <div class="profile">
+                            <font-awesome-icon class="icon-profile" icon="user"/>
+                        </div>
+                    </router-link>
                     <div class="user-name">
                         <p>
                             <strong>Chetta</strong>
+                        </p>
+                        <p class="date">
+                            <em>Le 12 octobre 2021 à 16.01</em>
                         </p>
                     </div>
                 </div>
@@ -145,15 +150,26 @@
 
                     .user-name {
                         margin-left: 10px;
+                        display: flex;
+                        align-items: center;
+                        .date {
+                            font-size:0.75em;
+                            margin-left: 10px;
+
+                        }
                     }
                 }
 
                 .modified {
                     position: relative;
                     cursor: pointer;
-                    .icon-show-menu{
+
+                    .icon-show-menu {
                         color: #f9abab;
                         font-size: 1.3em;
+                        &:hover{
+                            color: lighten(#f9abab, 2%);
+                        }
                     }
 
                 }
@@ -161,6 +177,7 @@
                 .show-menu-modified {
                     position: absolute;
                     right: 0;
+
                     .background {
                         width: 150px;
                         height: 80px;

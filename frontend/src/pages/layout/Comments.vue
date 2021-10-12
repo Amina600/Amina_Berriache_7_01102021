@@ -1,15 +1,23 @@
 <template>
     <div class="bloc-comment">
         <div class="comment">
-            <div class="profile">
-                <font-awesome-icon class="icon-profile" icon="user"/>
-            </div>
+            <router-link to="/profile">
+                <div class="profile">
+                    <font-awesome-icon class="icon-profile" icon="user"/>
+                </div>
+            </router-link>
             <div class="comment-post">
                 <div class="content-comment">
                     <div class="user-name">
-                        <p>
-                            <strong>Chetta</strong>
-                        </p>
+                        <div class="header-user">
+                            <p>
+                                <strong>Chetta</strong>
+                            </p>
+                            <p class="date">
+                                <em>Le 12 octobre 2021 à 16.01</em>
+                            </p>
+                        </div>
+                        <font-awesome-icon class="icon-deleted" icon="trash-alt"/>
                     </div>
                     <div class="content">
                         <p>
@@ -28,9 +36,16 @@
             <div class="comment-post">
                 <div class="content-comment">
                     <div class="user-name">
-                        <p>
-                            <strong>Chetta</strong>
-                        </p>
+                        <div class="header-user">
+                            <p>
+                                <strong>Chetta</strong>
+                            </p>
+                            <p class="date">
+                                <em>Le 12 octobre 2021 à 16.01</em>
+                            </p>
+                        </div>
+                        <font-awesome-icon class="icon-deleted" icon="trash-alt"/>
+
                     </div>
                     <div class="content">
                         <p>
@@ -45,9 +60,11 @@
         <div class="input-comment">
 
             <div class="comment-post">
-                <div class="profile">
-                    <font-awesome-icon class="icon-profile" icon="user"/>
-                </div>
+                <router-link to="/profile">
+                    <div class="profile">
+                        <font-awesome-icon class="icon-profile" icon="user"/>
+                    </div>
+                </router-link>
                 <div class="content-comment">
                     <input type="text" placeholder="Écrivez un commentaire…">
                 </div>
@@ -108,9 +125,34 @@
 
             .content-comment {
                 .user-name {
-                    p {
-                        margin: 0;
+                    display: flex;
+                    justify-content: space-between;
+
+                    .header-user {
+                        display: flex;
+                        align-items: center;
+
+                        p {
+                            margin: 0;
+                        }
+
+                        .date {
+                            font-size: 0.75em;
+                            margin-left: 10px;
+
+                        }
                     }
+
+                    .icon-deleted {
+                        margin-right: 10px;
+                        font-size: 1.3em;
+                        color: #f9abab;
+                        cursor: pointer;
+                        &:hover{
+                            color: lighten(#f9abab, 2%);
+                        }
+                    }
+
                 }
             }
         }
@@ -172,11 +214,11 @@
             font-size: 1.1em;
             font-weight: 600;
             width: 120px;
-            border: 1px solid #f9abab;
-            background-color: #f9abab;
+            border: 1px solid forestgreen;
+            background-color: forestgreen;
 
             &:hover {
-                background-color: #ff7e6b;
+                background-color: lighten(forestgreen, 5%);
             }
         }
 

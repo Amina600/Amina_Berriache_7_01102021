@@ -2,9 +2,11 @@
     <div class="container">
         <div class="row">
             <div class="col-1">
-                <div class="profile">
-                    <font-awesome-icon class="icon-profile" icon="user"/>
-                </div>
+                <router-link to="/profile">
+                    <div class="profile">
+                        <font-awesome-icon class="icon-profile" icon="user"/>
+                    </div>
+                </router-link>
             </div>
             <div class="col-11">
                 <div class="input">
@@ -28,9 +30,11 @@
 
                     <div class="content">
                         <div class="user">
-                            <div class="profile">
-                                <font-awesome-icon class="icon-profile" icon="user"/>
-                            </div>
+                            <router-link to="/profile">
+                                <div class="profile">
+                                    <font-awesome-icon class="icon-profile" icon="user"/>
+                                </div>
+                            </router-link>
                             <div class="user-name">
                                 <p>
                                     <strong>Chetta</strong>
@@ -150,7 +154,7 @@
                 height: 40px;
                 border-radius: 20px;
                 margin-right: 10px;
-                background-color: #f9abab !important;
+                background-color: #f9abab;
                 color: #fff;
                 font-weight: bolder;
                 font-size: 1.2em;
@@ -159,7 +163,7 @@
                 transition: all 0.4s ease-in-out;
 
                 &:hover {
-                    background-color: #E0909C;
+                    background-color:lighten(#f9abab, 2%);
                     box-shadow: 0 1px 5px rgba(0, 0, 0, 0.6);
                 }
 
@@ -180,7 +184,7 @@
 
                 &:hover {
 
-                    background-color:  darken(#f9abab, 10%);
+                    background-color: lighten(#f9abab, 2%);
                     box-shadow: 0 1px 5px rgba(0, 0, 0, 0.6);
                 }
 
@@ -278,11 +282,11 @@
                             font-size: 1.1em;
                             font-weight: 600;
                             width: 120px;
-                            border: 1px solid #f9abab;
-                            background-color: #f9abab;
+                            border: 1px solid forestgreen;
+                            background-color: forestgreen;
 
                             &:hover {
-                                background-color: #ff7e6b;
+                                background-color:  lighten(forestgreen, 5%);
                             }
                         }
                     }
