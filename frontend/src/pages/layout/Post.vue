@@ -19,7 +19,7 @@
                 </div>
                 <div class="modified">
                     <font-awesome-icon v-on:click="toggleMenu" class="icon-show-menu" icon="ellipsis-v"/>
-                    <div v-if="reveal" :reveal="reveal" :toggleMenu="toggleMenu" class="show-menu-modified">
+                    <div v-if="reveal" class="show-menu-modified">
                         <div class="background">
                             <ul>
                                 <li>
@@ -72,6 +72,7 @@
     <div class="container">
         <div class="more-post">
             <font-awesome-icon class="icon-more" icon="plus-circle"/>
+            <p>Charger plus</p>
         </div>
     </div>
 
@@ -108,7 +109,6 @@
 <style lang="scss" scoped>
     .container {
         width: 1100px;
-        margin-top: 130px;
 
         .row {
             margin: 0 100px;
@@ -195,7 +195,7 @@
                                 justify-content: space-between;
 
                                 &:hover {
-                                    background: #f8d1d1;
+                                    background: #f5d8d8;
                                     color: white;
                                     border-radius: 3px;
                                     cursor: pointer;
@@ -276,7 +276,7 @@
                         cursor: pointer;
 
                         &:hover {
-                            color: #E0909C;
+                            color: #fdc3c3;
                         }
 
                     }
@@ -289,13 +289,22 @@
 
     .container {
         .more-post {
-            text-align: center;
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            p{
+                color: #f9abab;
+                font-weight: bold;
+                margin: 0;
+            }
 
             .icon-more {
                 color: #f9abab;
                 font-size: 2em;
                 font-weight: bolder;
                 cursor: pointer;
+                margin-right: 5px;
             }
         }
 

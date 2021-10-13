@@ -57,6 +57,10 @@
                 </div>
             </div>
         </div>
+        <div class="more-post">
+            <font-awesome-icon class="icon-more" icon="plus-circle"/>
+            <p>Charger plus</p>
+        </div>
         <div class="input-comment">
 
             <div class="comment-post">
@@ -72,6 +76,7 @@
             </div>
             <button class="send-comment btn-primary">Envoyer</button>
         </div>
+
     </div>
 
 </template>
@@ -156,7 +161,25 @@
                 }
             }
         }
-    }
+    }.more-post {
+         margin-top: 20px;
+         display: flex;
+         justify-content: center;
+         align-items: center;
+         p{
+             color: #f9abab;
+             font-weight: bold;
+             margin: 0;
+         }
+
+         .icon-more {
+             color: #f9abab;
+             font-size: 1.5em;
+             font-weight: bolder;
+             cursor: pointer;
+             margin-right: 5px;
+         }
+     }
 
     .input-comment {
         margin-top: 50px;
@@ -222,8 +245,9 @@
             }
         }
 
-
     }
+
+
 
 
 </style>

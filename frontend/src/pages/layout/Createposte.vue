@@ -93,7 +93,7 @@
 
 
         .row {
-            margin: 50px 100px;
+            margin: 50px 100px 115px 100px;
             height: 100px;
             border-radius: 5px;
             padding: 25px 25px;
