@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const userRoutes = require('./routes/user');
+const path = require('path');
 
 // Import des modèles pour création automatique des tables
 require('./models/user');
@@ -15,8 +16,10 @@ app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
     next();
 });
+
 //Middleware qui transforme le corps de la requete en objet js utilisable
 app.use(bodyParser.json());
+app.use('/images', express.static(path.join(__dirname, 'images')));
 app.use('/api/auth', userRoutes);
 
 // export de app et pouvoir y accéder depuis les autres fichiers js
