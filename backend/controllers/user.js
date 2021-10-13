@@ -1,7 +1,7 @@
+const db = require('../models');
 const bcrypt = require('bcrypt');
 const cryptoJS = require("crypto-js");
 const jwt = require('jsonwebtoken');
-const sequelize = require('../database');
 
 // Clé secrète pour l'email
 const key = cryptoJS.enc.Hex.parse(process.env.SECRET_TOKEN);
@@ -20,13 +20,13 @@ exports.signup = async (req, res, next) => {
         return;
     }
     // Vérifie si le pseudo existe dans la base de donnée
-    const pseudoExists = await sequelize.models.User.findOne({
+    const pseudoExists = await db.sequelize.models.User.findOne({
         where: {
             pseudo: body.pseudo
         }
     });
     // Vérifier si l'email existe dans la base de donnée
-    const emailExists = await sequelize.models.User.findOne({
+    const emailExists = await db.sequelize.models.User.findOne({
         where: {
             email: encryptEmail(body.email)
         }
@@ -49,7 +49,7 @@ exports.signup = async (req, res, next) => {
                 password: hash,
                 isAdmin: false
             };
-            sequelize.models.User.create(user)
+            db.sequelize.models.User.create(user)
                 .then(() => res.status(201).json({message: 'Utilisateur créé !'}))
                 .catch(error => res.status(500).json({error}));
         })
@@ -61,7 +61,7 @@ exports.signup = async (req, res, next) => {
 
 exports.login = (req, res) => {
 
-    sequelize.models.User.findOne({
+    db.sequelize.models.User.findOne({
         where: {
             email: encryptEmail(req.body.email)
         }

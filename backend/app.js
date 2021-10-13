@@ -4,9 +4,6 @@ const bodyParser = require('body-parser');
 const userRoutes = require('./routes/user');
 const path = require('path');
 
-// Import des modèles pour création automatique des tables
-require('./models/user');
-
 const app = express();
 
 //CORS, système de sécurité empêche les requêtes malveillantes d'accéder à des ressources sensibles
