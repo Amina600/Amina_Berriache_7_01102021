@@ -1,5 +1,5 @@
 <template>
-    <div class="container">
+    <div class="container" >
         <div class="row">
             <div class="col-1">
                 <router-link to="/profile">
@@ -63,18 +63,10 @@
                             <button v-on:click="save" :class="{'disabled': !content?.length}" class="btn-post btn-primary"
                                     :disabled="!content?.length" aria-disabled="true">Publier</button>
                         </div>
-
-
                     </div>
-
-
                 </div>
             </div>
-
-
         </div>
-
-
     </div>
 </template>
 
@@ -129,6 +121,7 @@
                     this.content = null;
                     this.file = null;
                     this.url = null;
+                    this.$root.$emit('postCreated');
                     this.togglePostPopup();
                 } catch (error) {
                     console.log(error)

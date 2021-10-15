@@ -1,5 +1,5 @@
 <template>
-    <div class="container">
+    <div class="container" :key="index" v-for="(post, index) in posts">
         <div class="row">
             <header>
                 <div class="user">
@@ -10,23 +10,23 @@
                     </router-link>
                     <div class="user-name">
                         <p>
-                            <strong>Chetta</strong>
+                            <strong>{{post.User.pseudo}}</strong>
                         </p>
                         <p class="date">
-                            <em>Le 12 octobre 2021 à 16.01</em>
+                            <em>{{post.createdAt}}</em>
                         </p>
                     </div>
                 </div>
                 <div class="modified">
-                    <font-awesome-icon v-on:click="toggleMenu" class="icon-show-menu" icon="ellipsis-v"/>
-                    <div v-if="reveal" class="show-menu-modified">
+                    <font-awesome-icon v-on:click="toggleMenu(post.id)" class="icon-show-menu" icon="ellipsis-v"/>
+                    <div v-if="showMenu[post.id]" class="show-menu-modified">
                         <div class="background">
                             <ul>
                                 <li>
                                     <p>Modifier</p>
                                     <font-awesome-icon class="icon-modified" icon="pen"/>
                                 </li>
-                                <li>
+                                <li v-on:click="deletePost(post.id, index)">
                                     <p>Supprimer</p>
                                     <font-awesome-icon class="icon-deleted" icon="trash-alt"/>
                                 </li>
@@ -38,17 +38,12 @@
             </header>
             <div class="content">
                 <p>
-                    What is Lorem Ipsum?
-                    Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
-                    industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type
-                    and scrambled it to make a type specimen book. It has survived not only five centuries, but also the
-                    leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s
-                    with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop
-                    publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+                    {{post.content}}
                 </p>
             </div>
-            <div class="photo">
-                <img src="../../assets/chat.jpeg">
+
+            <div v-if="post.urlMedia" class="photo">
+                <img :src="post.urlMedia">
             </div>
             <div class="param">
                 <div class="flex">
@@ -61,12 +56,12 @@
                 </div>
 
                 <div class="flex">
-                    <font-awesome-icon v-on:click="toggleComment" class="icon-comment" icon="comment-alt"/>
+                    <font-awesome-icon v-on:click="toggleComment(post.id)" class="icon-comment" icon="comment-alt"/>
                     <p class="up">2</p>
                 </div>
 
             </div>
-            <comments v-if="showComments" :toggleComment="toggleComment"/>
+            <comments v-if="showComments[post.id]"/>
         </div>
     </div>
     <div class="container">
@@ -81,6 +76,8 @@
 <script>
     import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
     import Comments from "../layout/Comments";
+    import axios from "axios";
+    import moment from "moment";
 
     export default {
         name: "post.vue",
@@ -90,25 +87,62 @@
         },
         data() {
             return {
-                reveal: false,
-                showComments: false,
+                showMenu: {},
+                showComments: {},
+                posts: []
             }
+        },
+        mounted() {
+            this.$root.$on("postCreated", ()=> this.getAllPost())
+        },
+        created() {
+            this.getAllPost();
         },
         methods: {
             // Toggle menu popup
-            toggleMenu: function () {
-                this.reveal = !this.reveal;
+            toggleMenu: function (postId) {
+                this.showMenu[postId] = !this.showMenu[postId];
             },
-            toggleComment: function () {
-                this.showComments = !this.showComments;
-            }
-        }
+            toggleComment: function (postId) {
+                this.showComments[postId] = !this.showComments[postId];
+            },
+            getAllPost() {
+                try {
+                    axios.get("post/")
+                        .then((response) => {
+                            this.posts = response.data.map((post) => {
+                                return {
+                                    ...post,
+                                    createdAt: moment(post.createdAt).format('LLLL')
+                                }
+                            });
+                        })
+                } catch (error) {
+                    if (error.response.status === 400) this.loginError = error.response.data.message;
+                    else this.loginError = 'Une erreur s\'est produite';
+                }
+            },
+            deletePost(postId, index) {
+                try {
+                    axios.delete("post/" + postId)
+                        .then(() => {
+                            this.posts.splice(index, 1);
+                        })
+                } catch (error) {
+                    if (error.response.status === 400) this.loginError = error.response.data.message;
+                    else this.loginError = 'Une erreur s\'est produite';
+                }
+            },
+        },
+
+
     }
 </script>
 
 <style lang="scss" scoped>
     .container {
         width: 1100px;
+        margin-bottom: 20px;
 
         .row {
             margin: 0 100px;
@@ -152,8 +186,9 @@
                         margin-left: 10px;
                         display: flex;
                         align-items: center;
+
                         .date {
-                            font-size:0.75em;
+                            font-size: 0.75em;
                             margin-left: 10px;
 
                         }
@@ -167,7 +202,8 @@
                     .icon-show-menu {
                         color: #f9abab;
                         font-size: 1.3em;
-                        &:hover{
+
+                        &:hover {
                             color: lighten(#f9abab, 2%);
                         }
                     }
@@ -229,9 +265,16 @@
 
             .photo {
                 width: 100%;
+                height: 400px;
                 overflow: hidden;
                 text-align: center;
                 margin-top: 10px;
+            }
+
+            img {
+                width: 100%;
+                height: 400px;
+                object-fit: cover;
             }
 
             .param {
@@ -293,7 +336,8 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            p{
+
+            p {
                 color: #f9abab;
                 font-weight: bold;
                 margin: 0;
