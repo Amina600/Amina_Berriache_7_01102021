@@ -11,10 +11,24 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      models.Comment.belongsTo(models.User, {
+        foreignKey: {
+          allowNull: false,
+        }
+      })
+      models.Comment.belongsTo(models.Post, {
+        foreignKey: {
+          allowNull: false,
+        }
+      })
     }
   };
   Comment.init({
-    content: DataTypes.STRING
+    message: DataTypes.STRING,
+    userId: DataTypes.INTEGER,
+    postId: DataTypes.INTEGER,
+    createdAt: DataTypes.DATE,
+
   }, {
     sequelize,
     modelName: 'Comment',

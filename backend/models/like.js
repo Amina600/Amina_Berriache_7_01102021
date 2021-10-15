@@ -11,10 +11,22 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      models.Like.belongsTo(models.User, {
+        foreignKey: {
+          allowNull: false,
+        }
+      })
+      models.Like.belongsTo(models.Post, {
+        foreignKey: {
+          allowNull: false,
+        }
+      })
     }
   };
   Like.init({
-    content: DataTypes.STRING
+    isLike: DataTypes.BOOLEAN,
+    userId: DataTypes.INTEGER,
+    postId: DataTypes.INTEGER,
   }, {
     sequelize,
     modelName: 'Like',
