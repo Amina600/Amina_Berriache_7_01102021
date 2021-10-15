@@ -11,11 +11,10 @@ exports.createPost = async (req, res, next) => {
             message: "Votre message createPost ne peut pas être vide"
         });
     }
-    console.log(postObject);
 
     const newPost = {
         ...postObject,
-        urlMedia: req.body.content && req.file ? `${req.protocol}://${req.get('host')}/images/${req.file.filename}` : null,
+        urlMedia: req.body.post && req.file ? `${req.protocol}://${req.get('host')}/images/${req.file.filename}` : null,
     };
 
     //Enregistre le post dans la base de données
@@ -29,9 +28,13 @@ exports.createPost = async (req, res, next) => {
 
 // Récupérer tous les posts
 exports.getAllPosts = async (req, res, next) => {
+
     await db.sequelize.models.Post.findAll({
         order: [
             ['createdAt', 'DESC'],
+        ],
+        include: [
+            "User"
         ]
     })
         .then((newPost) => {
@@ -70,22 +73,44 @@ exports.getAllPosts = async (req, res, next) => {
 
 //Suppression une sauce spécifique
 exports.deletePost = (req, res, next) => {
-    db.sequelize.models.Post.destroy({
+    const postId = parseInt(req.params.id)
+    db.sequelize.models.Post.findOne({
         where: {
-            id: req.body.id,
+            id: postId,
         }
     })
-        .then(newPost => {
-            const filename = newPost.imageUrl.split('/images/')[1];
-            fs.unlink(`images/${filename}`, () => {
-                db.sequelize.models.Post.destroy({
-                    where: {
-                        id: req.body.id
-                    }
-                })
-                    .then(() => res.status(200).json({message: 'Post supprimé !'}))
-                    .catch(error => res.status(400).json({error}));
-            });
+        .then( post => {
+
+            // Vérification si l'utilisateur est admin ou le créateur du post
+            if (!req.auth.isAdmin && post.userId !== req.auth.userId) {
+                res.status(403).json({
+                    error: new Error('Action non autorisée !')
+                });
+                return;
+            }
+
+            // Suppression du média
+            if (post.urlMedia) {
+                const filename = post.urlMedia.split('/images/')[1];
+                fs.unlink(`images/${filename}`, () => {
+                    deletePostDb(postId, res);
+                });
+            }
+            else {
+                deletePostDb(postId, res);
+            }
+
         })
         .catch(error => res.status(500).json({error}));
 };
+
+// Suppression du post, comments et likes en cascade
+function deletePostDb(postId, res) {
+    db.sequelize.models.Post.destroy({
+        where: {
+            id: postId,
+        }
+    })
+        .then(() => res.status(200).json({message: 'Post supprimé !'}))
+        .catch(error => res.status(400).json({error}));
+}

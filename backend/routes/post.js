@@ -12,13 +12,13 @@ const likeCtrl = require('../controllers/like');
 router.post('/', auth, multer, postCtrl.createPost);
 //
 // Récupérer tous les posts
-//router.get('/' + '', auth, postCtrl.getAllPosts);
+router.get('/', auth, postCtrl.getAllPosts);
 //
 // Mettre à jour un post
  //router.put('/:id', auth, multer, postCtrl.modifyPost);
 //
 // Suppression un post
- //router.delete('/:id', auth, postCtrl.deletePost);
+ router.delete('/:id', auth, postCtrl.deletePost);
 //
 
 
@@ -27,7 +27,7 @@ router.post('/', auth, multer, postCtrl.createPost);
 
 //-------------COMMENTAIRES------------
 //Créer un post et enregistrement dans la base des données
-//router.post('/', auth, multer, commentCtrl.postComment);
+router.post('/commentaire', auth, multer, commentCtrl.postComment);
 //
 // Récupérer tous les commentaires
 //router.get('/' + '', auth, commentCtrl.getAllComments);
