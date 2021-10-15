@@ -40,13 +40,29 @@
                                     <strong>Chetta</strong>
                                 </p>
                             </div>
+                            <div v-if="pseudo" class="user-name">
+                                <p>
+                                    <strong>{{pseudo.pseudo}}</strong>
+                                </p>
+                            </div>
                         </div>
                         <div class="message">
-                            <textarea name="message-post" id="message-post" cols="50" rows="8"
+                            <textarea name="message-post" v-model="content" id="message-post" cols="50" rows="4"
                                       placeholder="Dites bonjour !"></textarea>
+                            <div id="preview">
+                                <img v-if="url" :src="url"/>
+                                <button type="button" v-if="url" v-on:click="clear" class="btn-close btn btn-preview"></button>
+                            </div>
                         </div>
                         <div class="layout">
-                            <font-awesome-icon class="icon-select" icon="image"/>
+
+                            <label for="file-input">
+                                <font-awesome-icon class="icon-select" icon="image"/>
+                            </label>
+                            <input id="file-input" type="file" accept="image/*" ref="fileUpload" @change="onFileChange" />
+
+
+
                             <button class="btn-post btn-primary">Publier</button>
                         </div>
 
@@ -75,14 +91,30 @@
         data() {
             return {
                 reveal: false,
+                url: null,
+                pseudo: null,
+
             }
         },
 
         methods: {
             // Toggle Post popup
             togglePostPopup: function () {
-                this.reveal = !this.reveal;
-            }
+                this.reveal = !this.reveal
+            },
+            // Télécharger les photos
+            onFileChange(e) {
+                const file = e.target.files[0]
+                this.url = URL.createObjectURL(file)
+            },
+            clear: function (){
+                this.url = ''
+                this.$refs.fileUpload.value=null
+            },
+            /*displayUser(){
+                let pseudo = JSON.parse(localStorage.getItem("pseudo", Response.data.pseudo))
+
+            }*/
         }
     }
 </script>
@@ -163,7 +195,7 @@
                 transition: all 0.4s ease-in-out;
 
                 &:hover {
-                    background-color:lighten(#f9abab, 2%);
+                    background-color: lighten(#f9abab, 2%);
                     box-shadow: 0 1px 5px rgba(0, 0, 0, 0.6);
                 }
 
@@ -215,7 +247,7 @@
                 background: white;
                 color: #333;
                 position: fixed;
-                top: 20%;
+                top: 15%;
                 width: 450px !important;
                 box-shadow: 0 0 7px 0 rgb(150, 149, 149);
 
@@ -252,8 +284,6 @@
                     }
 
                     .message {
-                        height: 200px;
-
                         textarea {
                             resize: none;
                             border: none;
@@ -262,16 +292,38 @@
                             outline: none;
                         }
 
+                        #preview {
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            position: relative;
+                        }#preview img {
+                             max-width: 100%;
+                             max-height: 150px;
+                         }.btn-preview{
+                              position: absolute;
+                              right: 0;
+                              top: 0;
+                          }
+
                     }
 
                     .layout {
                         display: flex;
                         justify-content: space-between;
                         align-items: center;
+                        margin-top: 20px;
 
                         .icon-select {
                             font-size: 2.5em;
                             color: #f9abab;
+                            cursor: pointer;
+                            &:hover{
+                            color: #f8d1d1;
+                        }
+                        }
+                        input{
+                            display: none;
                         }
 
                         .btn-post {
@@ -286,7 +338,7 @@
                             background-color: forestgreen;
 
                             &:hover {
-                                background-color:  lighten(forestgreen, 5%);
+                                background-color: lighten(forestgreen, 5%);
                             }
                         }
                     }

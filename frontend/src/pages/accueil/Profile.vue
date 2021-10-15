@@ -8,11 +8,17 @@
                         <h4>Photo de profile</h4>
                     </header>
                     <div class="container-photo">
-                        <img src="../../assets/photo-profile.png" alt="photo de profile">
+
+                        <img v-if="url" :src="url"/>
+                        <img v-else src="../../assets/photo-profile.png" alt="photo de profile">
                     </div>
                 </div>
                 <div class="btns-photo">
-                    <button class="btn-add">Ajouter une photo</button>
+                    <label class="custom-file-upload">
+                        Ajouter une photo
+                        <input id="file-input" type="file" accept="image/*" ref="fileUpload" @change="onFileChange" />
+                    </label>
+
                     <button class="btn-send-photo btn-primary">Appliquer</button>
                 </div>
 
@@ -79,15 +85,18 @@
         data() {
             return {
                 showDelete: false,
+                url: null,
             }
         },
         methods: {
             toggleDelete: function () {
                 this.showDelete = !this.showDelete;
+            },
+            onFileChange(e) {
+                const file = e.target.files[0]
+                this.url = URL.createObjectURL(file)
             }
-
         }
-
     }
 </script>
 
@@ -146,23 +155,26 @@
                 margin-top: 36px;
                 display: flex;
                 justify-content: space-between;
-
-                .btn-add {
+                .custom-file-upload {
                     margin-top: 25px;
                     margin-bottom: 15px;
                     border-radius: 3px;
-                    padding: 8px;
+                    border: 1px solid #ccc;
+                    display: inline-block;
+                    padding: 6px 12px;
+                    cursor: pointer;
                     font-size: 1.1em;
                     font-weight: 600;
                     border: 1px solid #f9abab;
                     background-color: #f9abab;
                     color: white;
-
                     &:hover {
                         background-color: lighten(#f9abab, 2%);
                     }
                 }
-
+                input[type="file"] {
+                    display: none;
+                }
                 .btn-send-photo {
                     margin-top: 25px;
                     margin-bottom: 15px;
