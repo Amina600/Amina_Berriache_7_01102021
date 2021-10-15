@@ -37,12 +37,7 @@
                             </router-link>
                             <div class="user-name">
                                 <p>
-                                    <strong>Chetta</strong>
-                                </p>
-                            </div>
-                            <div v-if="pseudo" class="user-name">
-                                <p>
-                                    <strong>{{pseudo.pseudo}}</strong>
+                                    <strong>{{user.pseudo}}</strong>
                                 </p>
                             </div>
                         </div>
@@ -51,7 +46,9 @@
                                       placeholder="Dites bonjour !"></textarea>
                             <div id="preview">
                                 <img v-if="url" :src="url"/>
-                                <button type="button" v-if="url" v-on:click="clear" class="btn-close btn btn-preview"></button>
+                                <button type="button" v-if="url" v-on:click="clear"
+                                        class="btn-close btn btn-preview">
+                                </button>
                             </div>
                         </div>
                         <div class="layout">
@@ -59,11 +56,12 @@
                             <label for="file-input">
                                 <font-awesome-icon class="icon-select" icon="image"/>
                             </label>
-                            <input id="file-input" type="file" accept="image/*" ref="fileUpload" @change="onFileChange" />
+                            <input id="file-input" type="file" accept="image/*" ref="fileUpload"
+                                   @change="onFileChange"/>
 
 
-
-                            <button class="btn-post btn-primary">Publier</button>
+                            <button v-on:click="save" :class="{'disabled': !content?.length}" class="btn-post btn-primary"
+                                    :disabled="!content?.length" aria-disabled="true">Publier</button>
                         </div>
 
 
@@ -82,6 +80,7 @@
 
 <script>
     import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
+    import axios from "axios";
 
     export default {
         name: "Createposte",
@@ -89,32 +88,52 @@
             'font-awesome-icon': FontAwesomeIcon
         },
         data() {
+            let user = JSON.parse(localStorage.getItem('user'));
+
             return {
                 reveal: false,
                 url: null,
-                pseudo: null,
-
+                content: '',
+                file: null,
+                user
             }
         },
 
         methods: {
             // Toggle Post popup
             togglePostPopup: function () {
-                this.reveal = !this.reveal
+                this.reveal = !this.reveal;
             },
             // Télécharger les photos
             onFileChange(e) {
-                const file = e.target.files[0]
-                this.url = URL.createObjectURL(file)
+                this.file = e.target.files[0];
+                this.url = URL.createObjectURL(this.file);
             },
-            clear: function (){
+            clear: function () {
                 this.url = ''
-                this.$refs.fileUpload.value=null
+                this.$refs.fileUpload.value = null
             },
-            /*displayUser(){
-                let pseudo = JSON.parse(localStorage.getItem("pseudo", Response.data.pseudo))
+            save: async function () {
+                let post = {
+                    content: this.content,
+                    UserId: this.user.id,
+                };
 
-            }*/
+                // Request
+                try {
+                    const config = {headers: {'Content-Type': 'multipart/form-data'}};
+                    let fd = new FormData();
+                    fd.append('post', JSON.stringify(post));
+                    fd.append('file', this.file);
+                    await axios.post("post/", fd, config)
+                    this.content = null;
+                    this.file = null;
+                    this.url = null;
+                    this.togglePostPopup();
+                } catch (error) {
+                    console.log(error)
+                }
+            }
         }
     }
 </script>
@@ -297,14 +316,18 @@
                             justify-content: center;
                             align-items: center;
                             position: relative;
-                        }#preview img {
-                             max-width: 100%;
-                             max-height: 150px;
-                         }.btn-preview{
-                              position: absolute;
-                              right: 0;
-                              top: 0;
-                          }
+                        }
+
+                        #preview img {
+                            max-width: 100%;
+                            max-height: 150px;
+                        }
+
+                        .btn-preview {
+                            position: absolute;
+                            right: 0;
+                            top: 0;
+                        }
 
                     }
 
@@ -318,11 +341,13 @@
                             font-size: 2.5em;
                             color: #f9abab;
                             cursor: pointer;
-                            &:hover{
-                            color: #f8d1d1;
+
+                            &:hover {
+                                color: #f8d1d1;
+                            }
                         }
-                        }
-                        input{
+
+                        input {
                             display: none;
                         }
 
@@ -339,6 +364,10 @@
 
                             &:hover {
                                 background-color: lighten(forestgreen, 5%);
+                            }
+                            &.disabled{
+                                background-color: darkgrey;
+                                border: 1px solid darkgrey;
                             }
                         }
                     }

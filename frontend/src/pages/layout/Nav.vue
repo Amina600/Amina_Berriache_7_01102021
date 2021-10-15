@@ -27,7 +27,7 @@
                                     </router-link>
                                 </li>
                                 <li>
-                                    <a href="javascript:void(0)" @click="handleLogout" class="icon-signOut">
+                                    <a href="javascript:void(0)" v-on:click="handleLogout" class="icon-signOut">
                                         <font-awesome-icon icon="sign-out-alt"/>
                                     </a>
                                 </li>
@@ -53,7 +53,7 @@
         },
         methods: {
             handleLogout(){
-                localStorage.removeItem('token')
+                localStorage.removeItem('user')
                 this.$router.push('/')
             }
 

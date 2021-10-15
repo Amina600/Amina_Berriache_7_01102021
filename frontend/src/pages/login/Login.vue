@@ -70,8 +70,9 @@
                 reveal: false,
                 loginEmail: '',
                 loginPassword: '',
-                loginError: null
-            };
+                loginError: null,
+
+            }
         },
         components: {
             Register
@@ -102,10 +103,9 @@
                     const response = await axios.post('auth/login', {
                         email: this.loginEmail,
                         password: this.loginPassword
-
                     })
                     // Sauvegarde du token et redirection vers Accueil
-                    localStorage.setItem('token', response.data.token);
+                    localStorage.setItem('user', JSON.stringify(response.data));
                     this.$router.push('./accueil');
                 } catch (error) {
                     if (error.response.status === 400) this.loginError = error.response.data.message;
