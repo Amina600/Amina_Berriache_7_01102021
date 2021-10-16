@@ -34,15 +34,17 @@ exports.getAllPosts = async (req, res, next) => {
             ['createdAt', 'DESC'],
         ],
         include: [
-            "User"
-        ]
+            "User",
+            {model: db.sequelize.models.Comment, attributes: []}
+        ],
+        attributes: {
+            include: [[db.Sequelize.fn("COUNT", 'comment.id'), "commentCount"]]
+        },
+        group: ['Post.id']
     })
         .then((newPost) => {
             res.status(200).json(newPost);
         })
-        .catch((error) => {
-            res.status(400).json({error: error});
-        });
 };
 
 // Mettre à jour un post

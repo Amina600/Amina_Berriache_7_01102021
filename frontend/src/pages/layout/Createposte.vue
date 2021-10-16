@@ -108,7 +108,7 @@
             save: async function () {
                 let post = {
                     content: this.content,
-                    UserId: this.user.id,
+                    userId: this.user.id,
                 };
 
                 // Request

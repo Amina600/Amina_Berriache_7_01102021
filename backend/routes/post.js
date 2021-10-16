@@ -33,7 +33,7 @@ router.post('/comment', auth, commentCtrl.postComment);
 router.get('/:id/comment', auth, commentCtrl.getAllComments);
 
 //// Suppression un commentaire
-//router.delete('/:id', auth, commentCtrl.deleteComment);
+router.delete('/comment/:id/', auth, commentCtrl.deleteComment);
 
 //------------LIKE/DISLIKE-----------------
 // Like & dislike

@@ -13,16 +13,18 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       models.Comment.belongsTo(models.User, {
         foreignKey: {
+          name: 'userId',
           allowNull: false,
         }
       })
       models.Comment.belongsTo(models.Post, {
         foreignKey: {
+          name: 'postId',
           allowNull: false,
         }
       })
     }
-  };
+  }
   Comment.init({
     message: DataTypes.STRING,
     userId: DataTypes.INTEGER,

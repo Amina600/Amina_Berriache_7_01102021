@@ -15,7 +15,7 @@
                                 <em>{{comment.createdAt}}</em>
                             </p>
                         </div>
-                        <font-awesome-icon class="icon-deleted" icon="trash-alt"/>
+                        <font-awesome-icon v-on:click="deleteComment(comment.id, index)" class="icon-deleted" icon="trash-alt"/>
 
                     </div>
                     <div class="content">
@@ -71,7 +71,7 @@
             saveComment: async function () {
                 let comment = {
                     message: this.message,
-                    PostId: this.post.id
+                    postId: this.post.id
                 };
 
                 // Request
@@ -100,15 +100,14 @@
 
                 }
             },
-            deleteComment(postId, index) {
+            deleteComment(commentId, index) {
                 try {
-                    axios.delete("post/" + postId)
+                    axios.delete("post/comment/" + commentId)
                         .then(() => {
-                            this.posts.splice(index, 1);
+                            this.comments.splice(index, 1);
                         })
                 } catch (error) {
-                    if (error.response.status === 400) this.loginError = error.response.data.message;
-                    else this.loginError = 'Une erreur s\'est produite';
+                    console.error(error);
                 }
             },
         }

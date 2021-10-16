@@ -10,7 +10,7 @@ exports.postComment = async (req, res, next) => {
     }
     const newComment = {
         ...commentObject,
-        UserId: req.auth.userId,
+        userId: req.auth.userId,
     }
 
 //Enregistre le post dans la base de données
@@ -44,15 +44,33 @@ exports.getAllComments = async (req, res, next) => {
 };
 
 exports.deleteComment = (req, res, next) => {
-    db.sequelize.models.Comment.destroy({
+    const commentId = parseInt(req.params.id)
+    db.sequelize.models.Comment.findOne({
         where: {
-            id: req.body.id,
+            id: commentId
         }
     })
+        .then(comment => {
+            // Vérification si l'utilisateur est admin ou le créateur du post
+            if (!req.auth.isAdmin && comment.userId !== req.auth.userId) {
+                res.status(403).json({
+                    error: new Error('Action non autorisée !')
+                });
+                return;
+            }
+            // Suppression du média
+            db.sequelize.models.Comment.destroy({
+                where: {
+                    id: commentId
+                }
+            })
 
-        .then(() => res.status(200).json({message: 'Commentaire supprimé supprimé !'}))
-        .catch(error => res.status(400).json({error}));
+                .then(() => res.status(200).json({message: 'Commentaire supprimé supprimé !'}))
+                .catch(error => res.status(400).json({error}));
+        })
+        .catch(error => res.status(500).json({error}));
 }
+;
 
 
 

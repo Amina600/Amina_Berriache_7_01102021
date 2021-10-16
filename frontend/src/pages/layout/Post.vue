@@ -17,12 +17,12 @@
                         </p>
                     </div>
                 </div>
-                <div class="modified">
+                <div v-if="post.userId === myUser.id || myUser.isAdmin" class="modified">
                     <font-awesome-icon v-on:click="toggleMenu(post.id)" class="icon-show-menu" icon="ellipsis-v"/>
                     <div v-if="showMenu[post.id]" class="show-menu-modified">
                         <div class="background">
                             <ul>
-                                <li>
+                                <li v-if="post.userId === myUser.id" >
                                     <p>Modifier</p>
                                     <font-awesome-icon class="icon-modified" icon="pen"/>
                                 </li>
@@ -57,17 +57,11 @@
 
                 <div class="flex">
                     <font-awesome-icon v-on:click="toggleComment(post.id)" class="icon-comment" icon="comment-alt"/>
-                    <p class="up">2</p>
+                    <p class="up">{{post.commentCount}}</p>
                 </div>
 
             </div>
             <comments :post="post" v-if="showComments[post.id]"/>
-        </div>
-    </div>
-    <div class="container">
-        <div class="more-post">
-            <font-awesome-icon class="icon-more" icon="plus-circle"/>
-            <p>Charger plus</p>
         </div>
     </div>
 
@@ -86,10 +80,12 @@
             Comments,
         },
         data() {
+            let myUser = JSON.parse(localStorage.getItem('user'));
             return {
                 showMenu: {},
                 showComments: {},
-                posts: []
+                posts: [],
+                myUser
             }
         },
         created() {
@@ -125,8 +121,7 @@
                             this.posts.splice(index, 1);
                         })
                 } catch (error) {
-                    if (error.response.status === 400) this.loginError = error.response.data.message;
-                    else this.loginError = 'Une erreur s\'est produite';
+                    console.error(error);
                 }
             },
         },
@@ -211,8 +206,6 @@
                     right: 0;
 
                     .background {
-                        width: 150px;
-                        height: 80px;
                         background-color: white;
                         border-radius: 5px;
                         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
@@ -225,6 +218,8 @@
                             li {
                                 display: flex;
                                 justify-content: space-between;
+                                align-items: center;
+                                padding: 5px;
 
                                 &:hover {
                                     background: #f5d8d8;
@@ -236,16 +231,18 @@
                                 p {
                                     font-weight: bold;
                                     margin: 8px;
+                                    font-size: 0.9em;
                                 }
 
                                 .icon-deleted {
-                                    margin: 5px;
+                                    margin: 8px;
                                     color: #f9abab;
-                                    font-size: 1.3em;
+                                    font-size: 1em;
                                 }
 
                                 .icon-modified {
-                                    margin: 5px;
+                                    margin: 8px;
+                                    font-size: 1em;
                                 }
                             }
                         }
@@ -320,35 +317,8 @@
 
                     }
                 }
-
-
             }
         }
     }
-
-    .container {
-        .more-post {
-            margin-top: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-
-            p {
-                color: #f9abab;
-                font-weight: bold;
-                margin: 0;
-            }
-
-            .icon-more {
-                color: #f9abab;
-                font-size: 2em;
-                font-weight: bolder;
-                cursor: pointer;
-                margin-right: 5px;
-            }
-        }
-
-    }
-
 
 </style>
