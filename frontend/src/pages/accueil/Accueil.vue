@@ -4,7 +4,6 @@
     <Post/>
 </template>
 <script>
-    //import axios from 'axios'
     import Nav from "../layout/Nav";
     import Createpost from "../layout/Createposte";
     import Post from "../layout/Post"
@@ -17,11 +16,6 @@
             Createpost,
             Post
         }
-        /*async created() {
-          const response = await axios.get('user')
-          console.log(response)
-
-        }*/
     }
 </script>
 <style scoped lang="scss">

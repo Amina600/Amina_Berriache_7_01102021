@@ -118,11 +118,7 @@
                     fd.append('post', JSON.stringify(post));
                     fd.append('file', this.file);
                     await axios.post("post/", fd, config)
-                    this.content = null;
-                    this.file = null;
-                    this.url = null;
-                    this.$root.$emit('postCreated');
-                    this.togglePostPopup();
+                    this.$router.go()
                 } catch (error) {
                     console.log(error)
                 }

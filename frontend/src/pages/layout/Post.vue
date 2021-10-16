@@ -61,7 +61,7 @@
                 </div>
 
             </div>
-            <comments v-if="showComments[post.id]"/>
+            <comments :post="post" v-if="showComments[post.id]"/>
         </div>
     </div>
     <div class="container">
@@ -92,9 +92,6 @@
                 posts: []
             }
         },
-        mounted() {
-            this.$root.$on("postCreated", ()=> this.getAllPost())
-        },
         created() {
             this.getAllPost();
         },
@@ -118,8 +115,7 @@
                             });
                         })
                 } catch (error) {
-                    if (error.response.status === 400) this.loginError = error.response.data.message;
-                    else this.loginError = 'Une erreur s\'est produite';
+                   console.error(error)
                 }
             },
             deletePost(postId, index) {

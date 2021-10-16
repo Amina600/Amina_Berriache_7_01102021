@@ -1,35 +1,6 @@
 <template>
     <div class="bloc-comment">
-        <div class="comment">
-            <router-link to="/profile">
-                <div class="profile">
-                    <font-awesome-icon class="icon-profile" icon="user"/>
-                </div>
-            </router-link>
-            <div class="comment-post">
-                <div class="content-comment">
-                    <div class="user-name">
-                        <div class="header-user">
-                            <p>
-                                <strong>Chetta</strong>
-                            </p>
-                            <p class="date">
-                                <em>Le 12 octobre 2021 à 16.01</em>
-                            </p>
-                        </div>
-                        <font-awesome-icon class="icon-deleted" icon="trash-alt"/>
-                    </div>
-                    <div class="content">
-                        <p>
-                            What is Lorem Ipsum?
-                            Lorem Ipsum is simply dummy text of the printing and typesetting industry the printing and
-                            typesetting industry.
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="comment">
+        <div class="comment" :key="index" v-for="(comment, index) in comments">
             <div class="profile">
                 <font-awesome-icon class="icon-profile" icon="user"/>
             </div>
@@ -38,10 +9,10 @@
                     <div class="user-name">
                         <div class="header-user">
                             <p>
-                                <strong>Chetta</strong>
+                                <strong>{{comment.User.pseudo}}</strong>
                             </p>
                             <p class="date">
-                                <em>Le 12 octobre 2021 à 16.01</em>
+                                <em>{{comment.createdAt}}</em>
                             </p>
                         </div>
                         <font-awesome-icon class="icon-deleted" icon="trash-alt"/>
@@ -49,20 +20,13 @@
                     </div>
                     <div class="content">
                         <p>
-                            What is Lorem Ipsum?
-                            Lorem Ipsum is simply dummy text of the printing and typesetting industry the printing and
-                            typesetting industry.
+                            {{comment.message}}
                         </p>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="more-post">
-            <font-awesome-icon class="icon-more" icon="plus-circle"/>
-            <p>Charger plus</p>
-        </div>
         <div class="input-comment">
-
             <div class="comment-post">
                 <router-link to="/profile">
                     <div class="profile">
@@ -70,11 +34,11 @@
                     </div>
                 </router-link>
                 <div class="content-comment">
-                    <input type="text" placeholder="Écrivez un commentaire…">
+                    <input v-model="message" type="text" placeholder="Écrivez un commentaire…">
                 </div>
 
             </div>
-            <button class="send-comment btn-primary">Envoyer</button>
+            <button v-on:click="saveComment" class="send-comment btn-primary">Envoyer</button>
         </div>
 
     </div>
@@ -83,11 +47,70 @@
 
 <script>
     import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
+    import axios from "axios";
+    import moment from "moment";
 
     export default {
         name: "Comments",
+        props: ['post'],
         components: {
             'font-awesome-icon': FontAwesomeIcon
+        },
+        created() {
+            this.getAllComments();
+        },
+        data(){
+            let user = JSON.parse(localStorage.getItem('user'));
+            return{
+                message:'',
+                user,
+                comments: []
+            }
+        },
+        methods: {
+            saveComment: async function () {
+                let comment = {
+                    message: this.message,
+                    PostId: this.post.id
+                };
+
+                // Request
+                try {
+                    await axios.post("post/comment", {comment})
+                    this.message = null;
+                    this.getAllComments();
+
+                } catch (error) {
+                    console.log(error)
+                }
+            },
+            getAllComments: function() {
+                try {
+                    axios.get(`post/${this.post.id}/comment`)
+                        .then((response) => {
+                            this.comments = response.data.map((comment) => {
+                                return {
+                                    ...comment,
+                                    createdAt: moment(comment.createdAt).format('LLLL')
+                                }
+                            });
+                        })
+                } catch (error) {
+                    console.error(error)
+
+                }
+            },
+            deleteComment(postId, index) {
+                try {
+                    axios.delete("post/" + postId)
+                        .then(() => {
+                            this.posts.splice(index, 1);
+                        })
+                } catch (error) {
+                    if (error.response.status === 400) this.loginError = error.response.data.message;
+                    else this.loginError = 'Une erreur s\'est produite';
+                }
+            },
         }
     }
 </script>
@@ -161,25 +184,7 @@
                 }
             }
         }
-    }.more-post {
-         margin-top: 20px;
-         display: flex;
-         justify-content: center;
-         align-items: center;
-         p{
-             color: #f9abab;
-             font-weight: bold;
-             margin: 0;
-         }
-
-         .icon-more {
-             color: #f9abab;
-             font-size: 1.5em;
-             font-weight: bolder;
-             cursor: pointer;
-             margin-right: 5px;
-         }
-     }
+    }
 
     .input-comment {
         margin-top: 50px;

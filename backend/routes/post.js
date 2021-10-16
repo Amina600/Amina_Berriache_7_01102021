@@ -27,10 +27,10 @@ router.get('/', auth, postCtrl.getAllPosts);
 
 //-------------COMMENTAIRES------------
 //Créer un post et enregistrement dans la base des données
-router.post('/commentaire', auth, multer, commentCtrl.postComment);
+router.post('/comment', auth, commentCtrl.postComment);
 //
 // Récupérer tous les commentaires
-//router.get('/' + '', auth, commentCtrl.getAllComments);
+router.get('/:id/comment', auth, commentCtrl.getAllComments);
 
 //// Suppression un commentaire
 //router.delete('/:id', auth, commentCtrl.deleteComment);

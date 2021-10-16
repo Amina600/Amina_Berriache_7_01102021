@@ -110,6 +110,7 @@ function deletePostDb(postId, res) {
         where: {
             id: postId,
         }
+
     })
         .then(() => res.status(200).json({message: 'Post supprimé !'}))
         .catch(error => res.status(400).json({error}));

@@ -51,7 +51,7 @@ exports.signup = async (req, res, next) => {
             };
             db.sequelize.models.User.create(user)
                 .then(() => res.status(201).json({message: 'Utilisateur créé !'}))
-                .catch(error => res.status(500).json({error}));
+                .catch(error => res.status(500).json({error}) );
         })
         .catch(function (err) {
             res.status(500).json({message: 'Error server'});
@@ -75,11 +75,11 @@ exports.login = (req, res) => {
                     return res.status(400).json({message: 'Mot de passe incorrect !'});
                 }
                 res.status(200).json({
-                    userId: user.id,
+                    id: user.id,
                     pseudo: user.pseudo,
                     isAdmin: user.isAdmin,
                     token: jwt.sign(
-                        {userId: user.id},
+                        {userId: user.id, isAdmin: user.isAdmin},
                         process.env.SECRET_TOKEN,
                         {expiresIn: '24h'}
                     )
