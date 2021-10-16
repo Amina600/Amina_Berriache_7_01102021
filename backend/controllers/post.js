@@ -38,7 +38,7 @@ exports.getAllPosts = async (req, res, next) => {
             {model: db.sequelize.models.Comment, attributes: []}
         ],
         attributes: {
-            include: [[db.Sequelize.fn("COUNT", 'comment.id'), "commentCount"]]
+            include: [[db.Sequelize.fn("COUNT", db.Sequelize.col('Comments.id')), "commentCount"]]
         },
         group: ['Post.id']
     })

@@ -47,11 +47,11 @@
             </div>
             <div class="param">
                 <div class="flex">
-                    <font-awesome-icon class="icon-arrow-up" icon="arrow-up"/>
+                    <font-awesome-icon v-on:click="sendLike(post.id, 1)" class="icon-arrow-up" icon="arrow-up"/>
                     <p class="up">5</p>
                 </div>
                 <div class="flex">
-                    <font-awesome-icon class="icon-arrow-down" icon="arrow-down"/>
+                    <font-awesome-icon  v-on:click="sendLike(post.id, -1)" class="icon-arrow-down" icon="arrow-down"/>
                     <p class="up">2</p>
                 </div>
 
@@ -61,7 +61,7 @@
                 </div>
 
             </div>
-            <comments :post="post" v-if="showComments[post.id]"/>
+            <comments :post="post" :updateCommentCount="($event) => updateCommentCount($event, index)" v-if="showComments[post.id]"/>
         </div>
     </div>
 
@@ -124,6 +124,25 @@
                     console.error(error);
                 }
             },
+            sendLike(postId, action){
+
+                try {
+                    axios.post( `post/like/${postId}`, {action})
+                        .then(() => {
+
+                            });
+
+                } catch (error) {
+                    console.error(error)
+
+                }
+            },
+            updateCommentCount(count, index){
+                this.posts[index] = {
+                    ...this.posts[index],
+                    commentCount: this.posts[index].commentCount + count
+                };
+            }
         },
 
 

@@ -52,7 +52,7 @@
 
     export default {
         name: "Comments",
-        props: ['post'],
+        props: ['post', 'updateCommentCount'],
         components: {
             'font-awesome-icon': FontAwesomeIcon
         },
@@ -79,6 +79,7 @@
                     await axios.post("post/comment", {comment})
                     this.message = null;
                     this.getAllComments();
+                    this.updateCommentCount(1);
 
                 } catch (error) {
                     console.log(error)
@@ -105,6 +106,7 @@
                     axios.delete("post/comment/" + commentId)
                         .then(() => {
                             this.comments.splice(index, 1);
+                            this.updateCommentCount(-1);
                         })
                 } catch (error) {
                     console.error(error);

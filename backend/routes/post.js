@@ -37,6 +37,6 @@ router.delete('/comment/:id/', auth, commentCtrl.deleteComment);
 
 //------------LIKE/DISLIKE-----------------
 // Like & dislike
-//router.post('/:id/like', auth, likeCtrl.ctrlLikeDislike);
+router.post('/like/:id/', auth, likeCtrl.ctrlLikeDislike);
 //
 module.exports = router;
