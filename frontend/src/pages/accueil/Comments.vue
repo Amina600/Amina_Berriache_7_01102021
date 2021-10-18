@@ -1,9 +1,10 @@
 <template>
     <div class="bloc-comment">
         <div class="comment" :key="index" v-for="(comment, index) in comments">
-            <div class="profile">
-                <font-awesome-icon class="icon-profile" icon="user"/>
+            <div>
+                <UserIcon :user="comment.User" :size="40"></UserIcon>
             </div>
+
             <div class="comment-post">
                 <div class="content-comment">
                     <div class="user-name">
@@ -15,7 +16,7 @@
                                 <em>{{comment.createdAt}}</em>
                             </p>
                         </div>
-                        <font-awesome-icon v-on:click="deleteComment(comment.id, index)" class="icon-deleted" icon="trash-alt"/>
+                        <font-awesome-icon v-if="comment.userId === user.id || user.isAdmin" v-on:click="deleteComment(comment.id, index)" class="icon-deleted" icon="trash-alt"/>
 
                     </div>
                     <div class="content">
@@ -38,7 +39,8 @@
                 </div>
 
             </div>
-            <button v-on:click="saveComment" class="send-comment btn-primary">Envoyer</button>
+            <button v-if="message" v-on:click="saveComment" class="send-comment btn-primary" :class="{'disabled': !message?.length}"
+                    :disabled="!message?.length" aria-disabled="true">Envoyer</button>
         </div>
 
     </div>
@@ -49,12 +51,14 @@
     import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
     import axios from "axios";
     import moment from "moment";
+    import UserIcon from "../layout/UserIcon";
 
     export default {
         name: "Comments",
         props: ['post', 'updateCommentCount'],
         components: {
-            'font-awesome-icon': FontAwesomeIcon
+            'font-awesome-icon': FontAwesomeIcon,
+            'UserIcon': UserIcon
         },
         created() {
             this.getAllComments();
@@ -89,6 +93,7 @@
                 try {
                     axios.get(`post/${this.post.id}/comment`)
                         .then((response) => {
+                            console.log(response)
                             this.comments = response.data.map((comment) => {
                                 return {
                                     ...comment,
@@ -121,59 +126,36 @@
         display: flex;
         padding: 5px;
 
-        .profile {
-            width: 30px;
-            height: 30px;
-            border-radius: 15px;
-            border: 1px solid #f9abab;
-            cursor: pointer;
-            font-size: 1em;
-            text-align: center;
-            margin: 0;
-            padding: 0;
-            color: #f9abab;
-            position: relative;
-
-
-            .icon-profile {
-                position: absolute;
-                font-size: 1em;
-                left: 8px;
-                bottom: 8px;
-            }
-        }
-
         .comment-post {
             width: 100%;
             border-radius: 5px;
             background-color: white;
-            padding-left: 10px;
-            padding-top: 5px;
             margin-left: 10px;
 
 
             .content-comment {
+                padding: 10px;
                 .user-name {
                     display: flex;
                     justify-content: space-between;
+                    align-items: center;
 
                     .header-user {
                         display: flex;
-                        align-items: center;
+                        align-items: baseline;
 
                         p {
                             margin: 0;
                         }
 
                         .date {
-                            font-size: 0.75em;
+                            font-size: 0.7em;
                             margin-left: 10px;
 
                         }
                     }
 
                     .icon-deleted {
-                        margin-right: 10px;
                         font-size: 1.3em;
                         color: #f9abab;
                         cursor: pointer;
@@ -182,7 +164,9 @@
                         }
                     }
 
-                }
+                }.content{
+                margin-top: 10px;
+                                 }
             }
         }
     }
@@ -248,6 +232,10 @@
 
             &:hover {
                 background-color: lighten(forestgreen, 5%);
+            }
+            &.disabled{
+                background-color: darkgrey;
+                border: 1px solid darkgrey;
             }
         }
 

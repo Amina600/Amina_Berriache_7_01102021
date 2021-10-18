@@ -1,20 +1,20 @@
 <template>
     <Nav/>
-    <Createpost/>
-    <Post/>
+    <CreatePost/>
+    <Posts/>
 </template>
 <script>
     import Nav from "../layout/Nav";
-    import Createpost from "../layout/Createposte";
-    import Post from "../layout/Post"
+    import CreatePost from "./CreatePost";
+    import Posts from "./Posts"
 
 
     export default {
         name: 'Accueil',
         components: {
             Nav,
-            Createpost,
-            Post
+            CreatePost,
+            Posts
         }
     }
 </script>

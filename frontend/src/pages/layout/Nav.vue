@@ -20,16 +20,19 @@
                         <div class="menu">
                             <ul>
                                 <li>
-                                    <router-link to="/profile">
-                                        <div class="profile">
-                                            <font-awesome-icon icon="user"/>
-                                        </div>
+                                    <router-link to="/profile" class="profile">
+                                        <UserIcon :user="myUser" :size="40"></UserIcon>
+                                        <p>{{myUser.pseudo}}</p>
+
                                     </router-link>
                                 </li>
                                 <li>
-                                    <a href="javascript:void(0)" v-on:click="handleLogout" class="icon-signOut">
-                                        <font-awesome-icon icon="sign-out-alt"/>
-                                    </a>
+                                    <div class="icon-signOut">
+                                        <a href="javascript:void(0)" v-on:click="handleLogout">
+                                            <font-awesome-icon icon="sign-out-alt"/>
+                                        </a>
+                                    </div>
+
                                 </li>
                             </ul>
                         </div>
@@ -44,15 +47,23 @@
 </template>
 
 <script>
-    import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
+    import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome"
+    import UserIcon from "./UserIcon"
 
     export default ({
         name: 'Nav',
         components: {
-            'font-awesome-icon': FontAwesomeIcon
+            'font-awesome-icon': FontAwesomeIcon,
+            'UserIcon': UserIcon
+        },
+        data() {
+            let myUser = JSON.parse(localStorage.getItem('user'));
+            return {
+                myUser,
+            }
         },
         methods: {
-            handleLogout(){
+            handleLogout() {
                 localStorage.removeItem('user')
                 this.$router.push('/')
             }
@@ -121,8 +132,7 @@
                         padding: 0;
 
                         li {
-                            margin-left: 50px;
-
+                            margin-left: 55px;
 
                             a {
                                 color: #333333;
@@ -132,35 +142,43 @@
                             }
 
                             .icon-signOut {
-                                font-size: 1.5em;
-                                cursor: pointer;
 
-                                &:hover {
-                                    color: #f9abab;
-                                }
-                            }
+                                a{
+                                    font-size: 1.6em;
+                                    cursor: pointer;
+                                    padding: 3px 7px;
 
-                            .profile {
-                                width: 30px;
-                                height: 30px;
-                                border-radius: 15px;
-                                border: 1px solid black;
-                                cursor: pointer;
-                                font-size: 1em;
-                                text-align: center;
+                                    &:hover {
+                                        border: 1px solid lighten(#fbf0f0, 1%);
+                                        background-color: lighten(#fbf0f0, 1%);
+                                        border-radius: 20px;
+                                        width: 40px;
+                                        height: 40px;
+                                        color: #f9abab;
 
-
-                                &:hover {
-                                    color: #f9abab;
-                                    border: 1px solid #f9abab;
-
+                                    }
                                 }
 
                             }
+                        }
 
+                        .profile {
+                            display: flex;
+                            align-items: center;
+                            padding: 3px;
+                            border: 1px solid transparent;
+                            border-radius: 20px;
+
+                            &:hover {
+                                border: 1px solid lighten(#fbf0f0, 1%);
+                                background-color: lighten(#fbf0f0, 1%);
+                                color: #f9abab;
+                            }
+                            p {
+                                margin: 5px 10px;
+                            }
                         }
                     }
-
 
                 }
             }
