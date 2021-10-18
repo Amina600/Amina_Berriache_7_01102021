@@ -1,12 +1,15 @@
 <template>
+
+    <div class="show-post container">
+        <button v-on:click="recent" class="btn-recent btn-primary">Récent</button>
+        <button v-on:click="populaire" class="btn-populaire btn-primary">Populaire</button>
+    </div>
     <div class="container" :key="index" v-for="(post, index) in posts">
         <div class="row">
             <header>
                 <div class="user">
                     <router-link to="/profile">
-                        <div class="profile">
-                            <font-awesome-icon class="icon-profile" icon="user"/>
-                        </div>
+                        <UserIcon :user="post.User" :size="50"></UserIcon>
                     </router-link>
                     <div class="user-name">
                         <p>
@@ -20,9 +23,10 @@
                 <div v-if="post.userId === myUser.id || myUser.isAdmin" class="modified">
                     <font-awesome-icon v-on:click="toggleMenu(post.id)" class="icon-show-menu" icon="ellipsis-v"/>
                     <div v-if="showMenu[post.id]" class="show-menu-modified">
+                        <div class="overlay" v-on:click="toggleMenu(post.id)"></div>
                         <div class="background">
                             <ul>
-                                <li v-if="post.userId === myUser.id" >
+                                <li v-on:click="togglePostPopup" v-if="post.userId === myUser.id">
                                     <p>Modifier</p>
                                     <font-awesome-icon class="icon-modified" icon="pen"/>
                                 </li>
@@ -31,9 +35,11 @@
                                     <font-awesome-icon class="icon-deleted" icon="trash-alt"/>
                                 </li>
                             </ul>
+                            <EditPost :reveal="reveal" :togglePostPopup="togglePostPopup" :postToEdit="post"/>
                         </div>
                     </div>
                 </div>
+
 
             </header>
             <div class="content">
@@ -41,18 +47,19 @@
                     {{post.content}}
                 </p>
             </div>
-
             <div v-if="post.urlMedia" class="photo">
                 <img :src="post.urlMedia">
             </div>
             <div class="param">
                 <div class="flex">
-                    <font-awesome-icon v-on:click="sendLike(post.id, 1)" class="icon-arrow-up" icon="arrow-up"/>
-                    <p class="up">5</p>
+                    <font-awesome-icon v-on:click="sendLike(post, index,post.iLiked ? 0 : 1)"
+                                       :class="{'liked': post.iLiked}" class="icon-arrow-up" icon="arrow-up"/>
+                    <p class="up">{{post.likeCount}}</p>
                 </div>
                 <div class="flex">
-                    <font-awesome-icon  v-on:click="sendLike(post.id, -1)" class="icon-arrow-down" icon="arrow-down"/>
-                    <p class="up">2</p>
+                    <font-awesome-icon v-on:click="sendLike(post, index,post.iDisliked ? 0 : -1)"
+                                       :class="{'disliked': post.iDisliked}" class="icon-arrow-down" icon="arrow-down"/>
+                    <p class="up">{{post.dislikeCount}}</p>
                 </div>
 
                 <div class="flex">
@@ -61,7 +68,8 @@
                 </div>
 
             </div>
-            <comments :post="post" :updateCommentCount="($event) => updateCommentCount($event, index)" v-if="showComments[post.id]"/>
+            <comments :post="post" :updateCommentCount="($event) => updateCommentCount($event, index)"
+                      v-if="showComments[post.id]"/>
         </div>
     </div>
 
@@ -69,15 +77,20 @@
 
 <script>
     import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
-    import Comments from "../layout/Comments";
+    import Comments from "./Comments";
     import axios from "axios";
     import moment from "moment";
+    import UserIcon from "../layout/UserIcon";
+    import EditPost from "./EditPost";
+
 
     export default {
-        name: "post.vue",
+        name: "Posts",
         components: {
             'font-awesome-icon': FontAwesomeIcon,
             Comments,
+            'UserIcon': UserIcon,
+            'EditPost': EditPost
         },
         data() {
             let myUser = JSON.parse(localStorage.getItem('user'));
@@ -85,13 +98,19 @@
                 showMenu: {},
                 showComments: {},
                 posts: [],
-                myUser
+                myUser,
+                reveal: false,
+
             }
         },
         created() {
             this.getAllPost();
         },
         methods: {
+            // Toggle Post popup
+            togglePostPopup: function () {
+                this.reveal = !this.reveal;
+            },
             // Toggle menu popup
             toggleMenu: function (postId) {
                 this.showMenu[postId] = !this.showMenu[postId];
@@ -106,12 +125,14 @@
                             this.posts = response.data.map((post) => {
                                 return {
                                     ...post,
-                                    createdAt: moment(post.createdAt).format('LLLL')
+                                    createdAt: moment(post.createdAt).format('lll'),
+                                    iLiked: post.iLiked === '1',
+                                    iDisliked: post.iDisliked === '1',
                                 }
                             });
                         })
                 } catch (error) {
-                   console.error(error)
+                    console.error(error)
                 }
             },
             deletePost(postId, index) {
@@ -124,81 +145,170 @@
                     console.error(error);
                 }
             },
-            sendLike(postId, action){
+            sendLike(post, index, action) {
 
                 try {
-                    axios.post( `post/like/${postId}`, {action})
+                    axios.post(`post/like/${post.id}`, {action})
                         .then(() => {
+                            let likeCount = post.likeCount;
+                            let dislikeCount = post.dislikeCount;
+                            let iLiked = post.iLiked;
+                            let iDisliked = post.iDisliked;
 
-                            });
+                            if (action === 1) {
+
+                                likeCount++;
+                                iLiked = true;
+
+                                if (iDisliked) {
+                                    dislikeCount--;
+                                    iDisliked = false;
+                                }
+
+                            } else if (action === -1) {
+
+                                dislikeCount++;
+                                iDisliked = true;
+
+                                if (iLiked) {
+                                    likeCount--;
+                                    iLiked = false;
+                                }
+                            } else {
+                                if (iLiked) {
+                                    likeCount--;
+                                    iLiked = false;
+                                } else {
+                                    dislikeCount--;
+                                    iDisliked = false;
+                                }
+                            }
+
+                            this.posts[index] = {...post, likeCount, dislikeCount, iLiked, iDisliked};
+                        });
 
                 } catch (error) {
                     console.error(error)
 
                 }
             },
-            updateCommentCount(count, index){
+            updateCommentCount(count, index) {
                 this.posts[index] = {
                     ...this.posts[index],
                     commentCount: this.posts[index].commentCount + count
                 };
-            }
-        },
-
-
+            },
+            recent() {
+                try {
+                    axios.get("post/")
+                        .then((response) => {
+                            this.posts = response.data.map((post) => {
+                                return {
+                                    ...post,
+                                    createdAt: moment(post.createdAt).format('lll')
+                                }
+                            });
+                        })
+                } catch (error) {
+                    console.error(error)
+                }
+            },
+            populaire() {
+                try {
+                    axios.get("post/populaire")
+                        .then((response) => {
+                            this.posts = response.data.map((post) => {
+                                return {
+                                    ...post,
+                                    createdAt: moment(post.createdAt).format('lll')
+                                }
+                            });
+                        })
+                } catch (error) {
+                    console.error(error)
+                }
+            },
+        }
     }
 </script>
 
 <style lang="scss" scoped>
+    .show-post {
+
+        padding: 0 160px;
+
+        .btn-recent {
+            width: 180px;
+            height: 40px;
+            border-radius: 20px;
+            margin-right: 10px;
+            background-color: #f9abab;
+            color: #fff;
+            font-weight: bolder;
+            font-size: 1.2em;
+            border: 1px solid #f9abab;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+            transition: all 0.4s ease-in-out;
+
+            &:hover {
+                background-color: lighten(#f9abab, 2%);
+                box-shadow: 0 1px 5px rgba(0, 0, 0, 0.6);
+            }
+        }
+
+        .btn-populaire {
+            width: 180px;
+            height: 40px;
+            border-radius: 20px;
+            margin-right: 10px;
+            background-color: #f9abab !important;
+            color: #fff;
+            font-weight: bolder;
+            font-size: 1.2em;
+            border: 1px solid #f9abab;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+            transition: all 0.4s ease-in-out;
+
+            &:hover {
+                background-color: lighten(#f9abab, 2%);
+                box-shadow: 0 1px 5px rgba(0, 0, 0, 0.6);
+            }
+        }
+    }
+
     .container {
         width: 1100px;
         margin-bottom: 20px;
 
         .row {
-            margin: 0 100px;
+            margin: 0 150px;
             border-radius: 5px;
-            padding: 25px 25px;
+            padding: 0 !important;
             background-color: lighten(#fbf0f0, 1%);
+            box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
 
             header {
                 display: flex;
                 justify-content: space-between;
                 align-items: flex-start;
+                padding: 20px 20px 0;
 
                 .user {
                     display: flex;
-                    justify-content: flex-start;
-                    align-items: flex-end;
-                    margin-bottom: 30px;
-
-                    .profile {
-                        width: 50px;
-                        height: 50px;
-                        border-radius: 25px;
-                        border: 1px solid #f9abab;
-                        cursor: pointer;
-                        font-size: 1.5em;
-                        text-align: center;
-                        margin: 0;
-                        padding: 0;
-                        color: #f9abab;
-                        position: relative;
-
-                        .icon-profile {
-                            position: absolute;
-                            font-size: 1.2em;
-                            left: 12px;
-                            bottom: 11px;
-                        }
-                    }
+                    align-items: flex-start;
 
                     .user-name {
-                        margin-left: 10px;
                         display: flex;
-                        align-items: center;
+                        flex-direction: column;
+                        align-items: flex-start;
+
+                        p {
+                            margin-bottom: 5px !important;
+                            margin-left: 10px;
+                        }
 
                         .date {
-                            font-size: 0.75em;
+                            font-size: 0.7em;
                             margin-left: 10px;
 
                         }
@@ -221,13 +331,23 @@
                 }
 
                 .show-menu-modified {
-                    position: absolute;
-                    right: 0;
+                    .overlay {
+                        position: fixed;
+                        top: 0;
+                        bottom: 0;
+                        left: 0;
+                        right: 0;
+
+                    }
 
                     .background {
                         background-color: white;
                         border-radius: 5px;
                         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+                        position: absolute;
+                        right: 0;
+                        top: 22px;
+
 
                         ul {
                             list-style-type: none;
@@ -275,24 +395,29 @@
                 }
             }
 
+            .content {
+                margin-top: 15px;
+                padding: 0px 20px;
+            }
+
             .photo {
-                width: 100%;
-                height: 400px;
+                max-width: 100%;
                 overflow: hidden;
                 text-align: center;
                 margin-top: 10px;
+                background-color: #333333;
             }
 
             img {
-                width: 100%;
-                height: 400px;
+                max-width: 100%;
                 object-fit: cover;
             }
 
             .param {
                 display: flex;
                 justify-content: flex-start;
-                margin-top: 20px;
+                padding: 20px 20px 0;
+                box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
 
                 .flex {
                     display: flex;
@@ -305,7 +430,7 @@
                         margin-right: 5px;
                         cursor: pointer;
 
-                        &:hover {
+                        &.liked, &:hover {
                             color: forestgreen;
                         }
                     }
@@ -317,7 +442,7 @@
                         margin-right: 5px;
                         cursor: pointer;
 
-                        &:hover {
+                        &.disliked, &:hover {
                             color: #fc3c14;
                         }
 
@@ -337,6 +462,8 @@
                     }
                 }
             }
+
+
         }
     }
 

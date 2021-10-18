@@ -14,8 +14,11 @@ router.post('/', auth, multer, postCtrl.createPost);
 // Récupérer tous les posts
 router.get('/', auth, postCtrl.getAllPosts);
 //
+// Récupérer tous les posts
+router.get('/populaire', auth, postCtrl.getAllPostsPopulaire);
+//
 // Mettre à jour un post
- //router.put('/:id', auth, multer, postCtrl.modifyPost);
+ router.put('/', auth, multer, postCtrl.updatePost);
 //
 // Suppression un post
  router.delete('/:id', auth, postCtrl.deletePost);

@@ -17,8 +17,8 @@
                         <p>{{user.pseudo}}</p>
                     </div>
                 </div>
-                <div class="message">
-                            <textarea name="message-post" v-model="content" id="message-post" cols="50" rows="4"
+                <div class="message scrollbar">
+                            <textarea name="message-post" v-model="content" id="message-post" cols="50" rows="3"
                                       placeholder="Dites bonjour !"></textarea>
                     <div id="preview">
                         <img v-if="url" :src="url"/>
@@ -36,7 +36,8 @@
                            @change="onFileChange"/>
 
 
-                    <button v-on:click="save" :class="{'disabled': !content.length && !url }" class="btn-post btn-primary"
+                    <button v-on:click="savePost" :class="{'disabled': !content.length && !url }"
+                            class="btn-post btn-primary"
                             :disabled="!content.length && !url" aria-disabled="true">Publier
                     </button>
                 </div>
@@ -57,19 +58,19 @@
             UserIcon,
             'font-awesome-icon': FontAwesomeIcon,
         },
-        props: ['reveal','togglePostPopup'],
+        props: ['postToEdit', 'reveal', 'togglePostPopup'],
         data() {
             let user = JSON.parse(localStorage.getItem('user'));
             return {
                 //url: this.postToEdit?.urlMedia || null,
                 //content: this.postToEdit?.content || '',
-                url: null,
-                content: '',
+                url: this.postToEdit?.urlMedia || null,
+                content: this.postToEdit?.content || '',
                 file: null,
                 user
             }
         },
-        methods:{
+        methods: {
             // Télécharger les photos
             onFileChange(e) {
                 this.file = e.target.files[0];
@@ -79,8 +80,9 @@
                 this.url = ''
                 this.$refs.fileUpload.value = null
             },
-            save: async function () {
+            savePost: async function () {
                 let post = {
+                    id: this.postToEdit.id,
                     content: this.content,
                     userId: this.user.id,
                 };
@@ -93,7 +95,13 @@
                     fd.append('file', this.file);
 
                     // TODO put or post
-                    await axios.post("post/", fd, config)
+                    if (this.postToEdit) {
+                        await axios.put("post/", fd, config);
+                    } else {
+
+                        await axios.post("post/", fd, config);
+                    }
+
                     this.$router.go();
                 } catch (error) {
                     console.log(error)
@@ -139,14 +147,19 @@
                 align-items: flex-start;
                 border-bottom: 0.2px solid rgb(212, 208, 208);
                 width: 100%;
-                margin-bottom: 15px;
-                padding: 15px;
-                padding-left: 80px;
+                padding: 15px 10px 15px 80px;
+
+                h4 {
+                    margin-bottom: 0 !important;
+                }
 
                 .btn-close {
                     font-size: 1em;
                     color: rgb(212, 208, 208);
                     font-weight: 700;
+                    border-radius: 30px;
+                    padding: 10px 10px;
+                    background-color: #cccccc;
 
                 }
 
@@ -172,6 +185,11 @@
 
                 .message {
 
+                    #scrollBar {
+                        overflow-y: auto;
+                        max-height: 300px;
+                    }
+
                     textarea {
                         resize: none;
                         border: none;
@@ -179,40 +197,38 @@
                         font-size: 1em;
                         outline: none;
                     }
-
                     #preview {
                         display: flex;
                         justify-content: center;
                         align-items: center;
                         position: relative;
                     }
-
                     #preview img {
-                        max-width: 100%;
-                        max-height: 150px;
+                        width: 100%;
+                        object-fit: cover;
+                        border: 1px solid #cccccc;
+                        border-radius: 5px;
                     }
-
                     .btn-preview {
                         position: absolute;
-                        right: 0;
-                        top: 0;
+                        right: 4px;
+                        top: 0px;
+                        border-radius: 30px;
+                        padding: 10px 10px;
+                        background-color: whitesmoke;
                     }
-
                 }
-
                 .layout {
                     display: flex;
                     justify-content: space-between;
-                    align-items: center;
-                    margin-top: 20px;
+                    align-items: flex-end;
 
                     .icon-select {
                         font-size: 2.5em;
                         color: #f9abab;
                         cursor: pointer;
 
-                        &
-                        :hover {
+                        &:hover {
                             color: #f8d1d1;
                         }
 
@@ -224,7 +240,6 @@
 
                     .btn-post {
                         margin-top: 25px;
-                        margin-bottom: 15px;
                         border-radius: 3px;
                         padding: 5px;
                         font-size: 1.1em;
@@ -233,8 +248,7 @@
                         border: 1px solid forestgreen;
                         background-color: forestgreen;
 
-                        &
-                        :hover {
+                        &:hover {
                             background-color: lighten(forestgreen, 5%);
                         }
 
@@ -245,7 +259,11 @@
 
                     }
                 }
+            }
 
+            .scrollbar {
+                overflow-y: scroll;
+                max-height: 350px;
             }
 
 

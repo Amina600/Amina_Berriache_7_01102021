@@ -35,10 +35,25 @@ exports.getAllPosts = async (req, res, next) => {
         ],
         include: [
             "User",
-            {model: db.sequelize.models.Comment, attributes: []}
+            {model: db.sequelize.models.Comment, attributes: []},
+            {model: db.sequelize.models.Like, attributes: []},
         ],
         attributes: {
-            include: [[db.Sequelize.fn("COUNT", db.Sequelize.col('Comments.id')), "commentCount"]]
+            include: [
+                [db.Sequelize.fn("COUNT", db.Sequelize.col('Comments.id')), "commentCount"],
+                [db.Sequelize.fn("SUM", db.Sequelize.literal("if(`Likes`.`isLike` = 1, 1, 0)")), "likeCount"],
+                [db.Sequelize.fn("SUM", db.Sequelize.literal("if(`Likes`.`isLike` = 0, 1, 0)")), "dislikeCount"],
+                [
+                    db.Sequelize.fn("SUM",
+                    db.Sequelize.literal("if(`Likes`.`isLike` = 1 AND `Likes`.`userId` = "+req.auth.userId+", 1, 0)")),
+                    "iLiked"
+                ],
+                [
+                    db.Sequelize.fn("SUM",
+                    db.Sequelize.literal("if(`Likes`.`isLike` = 0 AND `Likes`.`userId` = "+req.auth.userId+", 1, 0)")),
+                    "iDisliked"
+                ],
+            ]
         },
         group: ['Post.id']
     })
@@ -46,23 +61,45 @@ exports.getAllPosts = async (req, res, next) => {
             res.status(200).json(newPost);
         })
 };
+// Récupérer tous les posts
+exports.getAllPostsPopulaire = async (req, res, next) => {
 
+    await db.sequelize.models.Post.findAll({
+
+    })
+        .then((newPost) => {
+            res.status(200).json(newPost);
+        })
+};
 // Mettre à jour un post
-/*exports.modifyPost = (req, res, next) => {
-    const postObject = req.file ?
+exports.updatePost = async(req, res, next) => {
+
+    // Parser la requete
+    const newPost = req.file ?
         {
             ...JSON.parse(req.body.post),
-            imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-        } : {...req.body};
-    //Sauce.update({ _id: req.params.id }, { ...postObject, _id: req.params.id })
-    db.sequelize.models.Post.update({
+            urlMedia: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+        } : {
+            ...JSON.parse(req.body.post),
+            urlMedia: null
+        };
+
+    // Retrouver le post
+    const post = await db.sequelize.models.Post.findOne({
         where: {
-            id: req.body.id,
+            id: newPost.id,
         }
     })
+
+    if (post.urlMedia) {
+        const filename = post.urlMedia.split('/images/')[1];
+        fs.unlink(`images/${filename}`, () => {});
+    }
+
+    post.update(newPost)
         .then(() => {
                 res.status(201).json({
-                    message: 'Post updated successfully!'
+                    message: 'Post est à jour !'
                 });
             }
         ).catch((error) => {
@@ -71,7 +108,7 @@ exports.getAllPosts = async (req, res, next) => {
             });
         }
     );
-};*/
+};
 
 //Suppression une sauce spécifique
 exports.deletePost = (req, res, next) => {
