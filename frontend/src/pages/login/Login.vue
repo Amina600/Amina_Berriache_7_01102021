@@ -71,7 +71,6 @@
                 loginEmail: '',
                 loginPassword: '',
                 loginError: null,
-
             }
         },
         components: {
@@ -106,6 +105,8 @@
                     })
                     // Sauvegarde du token et redirection vers Accueil
                     localStorage.setItem('user', JSON.stringify(response.data));
+                    // Ajout du token dans axios
+                    axios.defaults.headers.common [ "Authorization"] = 'Bearer ' + response.data.token;
                     this.$router.push('./accueil');
                 } catch (error) {
                     if (error.response.status === 400) this.loginError = error.response.data.message;

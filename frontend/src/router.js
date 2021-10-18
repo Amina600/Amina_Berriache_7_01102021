@@ -1,7 +1,7 @@
 import {createWebHistory, createRouter} from "vue-router"
 import Login from './pages/login/Login.vue'
 import Accueil from './pages/accueil/Accueil.vue'
-import Profile from './pages/accueil/Profile'
+import Profile from './pages/profile/Profile'
 
 const routes = [
     {
