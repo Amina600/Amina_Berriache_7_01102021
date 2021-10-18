@@ -92,28 +92,10 @@ exports.deletePost = (req, res, next) => {
             }
 
             // Suppression du média
-            if (post.urlMedia) {
-                const filename = post.urlMedia.split('/images/')[1];
-                fs.unlink(`images/${filename}`, () => {
-                    deletePostDb(postId, res);
-                });
-            }
-            else {
-                deletePostDb(postId, res);
-            }
+            post.destroy()
+                .then(() => res.status(200).json({message: 'Post supprimé !'}))
+                .catch(error => res.status(400).json({error}));
 
         })
         .catch(error => res.status(500).json({error}));
 };
-
-// Suppression du post, comments et likes en cascade
-function deletePostDb(postId, res) {
-    db.sequelize.models.Post.destroy({
-        where: {
-            id: postId,
-        }
-
-    })
-        .then(() => res.status(200).json({message: 'Post supprimé !'}))
-        .catch(error => res.status(400).json({error}));
-}

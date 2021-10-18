@@ -1,4 +1,6 @@
 'use strict';
+const fs = require('fs');
+
 const {
   Model
 } = require('sequelize');
@@ -11,7 +13,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      models.User.hasMany(models.Post, { foreignKey: 'userId', onDelete:"cascade"});
+      models.User.hasMany(models.Post, { foreignKey: 'userId', onDelete:"cascade", hooks: true});
       models.User.hasMany(models.Comment, { foreignKey: 'userId', onDelete:"cascade"});
     }
   }
@@ -24,6 +26,21 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'User',
+    hooks: {
+      afterDestroy: (user) => {
+        deleteProfileFile(user);
+      },
+      afterBulkDestroy: (user) => {
+        deleteProfileFile(user);
+      },
+    }
   });
   return User;
 };
+
+function deleteProfileFile(user) {
+  if (user.profileUrl) {
+    const filename = user.profileUrl.split('/images/')[1];
+    fs.unlink(`images/${filename}`, () => {});
+  }
+}

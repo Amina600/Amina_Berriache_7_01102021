@@ -22,8 +22,6 @@ router.get('/', auth, postCtrl.getAllPosts);
 //
 
 
-//---------------UPDATE PROFILE -----------
-
 
 //-------------COMMENTAIRES------------
 //Créer un post et enregistrement dans la base des données

@@ -33,7 +33,7 @@ exports.signup = async (req, res, next) => {
     });
 
     if (pseudoExists) {
-        res.status(400).json({message: "ce pseudo est déjà pris !"});
+        res.status(400).json({message: "Ce pseudo est déjà pris !"});
         return;
     } else if (emailExists) {
         res.status(400).json({message: "Cet email est déjà pris !"});
@@ -78,6 +78,7 @@ exports.login = (req, res) => {
                     id: user.id,
                     pseudo: user.pseudo,
                     isAdmin: user.isAdmin,
+                    profileUrl: user.profileUrl,
                     token: jwt.sign(
                         {userId: user.id, isAdmin: user.isAdmin},
                         process.env.SECRET_TOKEN,
