@@ -1,7 +1,7 @@
 <template>
 
     <header>
-        <div class="container">
+        <div class="container-sm-md-lg">
             <div class="bg-header">
                 <div class="container">
                     <nav>
@@ -13,7 +13,7 @@
                                     </router-link>
                                 </li>
                                 <li>
-                                    <router-link to="/accueil">Home</router-link>
+                                    <router-link class="home" to="/accueil">Home</router-link>
                                 </li>
                             </ul>
                         </div>
@@ -23,16 +23,12 @@
                                     <router-link to="/profile" class="profile">
                                         <UserIcon :user="myUser" :size="40"></UserIcon>
                                         <p>{{myUser.pseudo}}</p>
-
                                     </router-link>
                                 </li>
                                 <li>
-                                    <div class="icon-signOut">
-                                        <a href="javascript:void(0)" v-on:click="handleLogout">
-                                            <font-awesome-icon icon="sign-out-alt"/>
-                                        </a>
-                                    </div>
-
+                                    <a href="javascript:void(0)" v-on:click="handleLogout" class="icon-signOut">
+                                        <font-awesome-icon icon="sign-out-alt"/>
+                                    </a>
                                 </li>
                             </ul>
                         </div>
@@ -84,109 +80,105 @@
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
+                margin: 0 135px 0px 135px;
+            }
 
-                .logo {
-                    ul {
-                        display: flex;
-                        justify-content: space-around;
-                        align-items: center;
-                        list-style-type: none;
+            .logo {
+                ul {
+                    display: flex;
+                    justify-content: space-around;
+                    align-items: center;
+                    list-style-type: none;
+                    margin: 0;
+                    padding: 0;
+                    cursor: pointer;
+
+                    .logo-photo {
                         margin: 0;
-                        padding: 0;
-                        cursor: pointer;
 
-                        .logo-photo {
-                            margin: 0;
-
-                            img {
-                                width: 223px;
-                            }
+                        img {
+                            width: 215px;
                         }
+                    }
 
-                        li {
-                            margin-left: 50px;
+                    li {
+                        margin-left: 45px;
 
-                            a {
-                                color: #333333;
-                                font-size: 1.2em;
-                                font-weight: 500;
-                                text-decoration: none;
-
-                                &:hover {
-                                    color: #f9abab;
-
-                                }
+                        .home{
+                            color: #333333;
+                            font-size: 1.2em;
+                            font-weight: 500;
+                            text-decoration: none;
+                            cursor: pointer;
+                            border: 1px solid transparent;
+                            border-radius: 30px;
+                            padding: 5px 10px;
+                            &:hover {
+                                color: #f9abab;
+                                border: 1px solid lighten(#fbf0f0, 1%);
+                                background-color: lighten(#fbf0f0, 1%);
+                                color: #f9abab;
 
                             }
+
                         }
                     }
                 }
+            }
 
-                .menu {
-                    ul {
-                        display: flex;
-                        justify-content: space-around;
-                        align-items: center;
-                        list-style-type: none;
-                        margin: 0;
-                        padding: 0;
+            .menu {
+                ul {
+                    display: flex;
+                    justify-content: space-around;
+                    align-items: center;
+                    list-style-type: none;
+                    margin: 0;
+                    padding: 0;
 
-                        li {
-                            margin-left: 55px;
+                    li {
+                        margin-left: 55px;
 
-                            a {
-                                color: #333333;
-                                font-size: 1.2em;
-                                font-weight: 500;
-                                text-decoration: none;
-                            }
-
-                            .icon-signOut {
-
-                                a{
-                                    font-size: 1.6em;
-                                    cursor: pointer;
-                                    padding: 3px 7px;
-
-                                    &:hover {
-                                        border: 1px solid lighten(#fbf0f0, 1%);
-                                        background-color: lighten(#fbf0f0, 1%);
-                                        border-radius: 20px;
-                                        width: 40px;
-                                        height: 40px;
-                                        color: #f9abab;
-
-                                    }
-                                }
-
-                            }
+                        a {
+                            color: #333333;
+                            font-size: 1.2em;
+                            font-weight: 500;
+                            text-decoration: none;
                         }
 
-                        .profile {
-                            display: flex;
-                            align-items: center;
-                            padding: 3px;
+                        .icon-signOut {
+                            cursor: pointer;
                             border: 1px solid transparent;
-                            border-radius: 20px;
+                            border-radius: 30px;
+                            padding: 5px 10px;
+                            font-size: 1.5em;
 
                             &:hover {
                                 border: 1px solid lighten(#fbf0f0, 1%);
                                 background-color: lighten(#fbf0f0, 1%);
                                 color: #f9abab;
                             }
-                            p {
-                                margin: 5px 10px;
-                            }
                         }
                     }
 
+                    .profile {
+                        display: flex;
+                        align-items: center;
+                        padding: 3px;
+                        border: 1px solid transparent;
+                        border-radius: 20px;
+                        &:hover {
+                            border: 1px solid lighten(#fbf0f0, 1%);
+                            background-color: lighten(#fbf0f0, 1%);
+                            color: #f9abab;
+                        }
+                        p {
+                            margin: 5px 10px;
+                            font-size: 0.95em;
+                        }
+                    }
                 }
             }
-
-
         }
-
-
     }
 
 

@@ -30,9 +30,7 @@
         <div class="input-comment">
             <div class="comment-post">
                 <router-link to="/profile">
-                    <div class="profile">
-                        <font-awesome-icon class="icon-profile" icon="user"/>
-                    </div>
+                    <UserIcon :user="user" :size="40"></UserIcon>
                 </router-link>
                 <div class="content-comment">
                     <input v-model="message" type="text" placeholder="Écrivez un commentaire…">
@@ -103,7 +101,6 @@
                         })
                 } catch (error) {
                     console.error(error)
-
                 }
             },
             deleteComment(commentId, index) {
@@ -124,7 +121,7 @@
 <style lang="scss" scoped>
     .comment {
         display: flex;
-        padding: 5px;
+        padding: 20px;
 
         .comment-post {
             width: 100%;
@@ -172,8 +169,9 @@
     }
 
     .input-comment {
-        margin-top: 50px;
+        margin-top: 20px;
         text-align: right;
+        padding: 20px;
 
         .comment-post {
             display: flex;

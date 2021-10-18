@@ -43,7 +43,6 @@
         border-radius: 100px;
         cursor: pointer;
         overflow: hidden;
-        border: 1px solid #f9abab;
 
         img{
             width: 100%;

@@ -10,7 +10,10 @@
                     <div class="container-photo">
 
                         <img v-if="url || myUser.profileUrl" :src="url || myUser.profileUrl"/>
-                        <img v-else src="src/assets/photo-profile.png" alt="photo de profile">
+                        <div v-else>
+                            <img src="../../../src/assets/photo-profile.png" alt="photo de profile" class="imgDefault">
+                        </div>
+
                     </div>
                 </div>
                 <div class="btns-photo">
@@ -19,7 +22,8 @@
                         <input id="file-input" type="file" accept="image/*" ref="fileUpload" @change="onFileChange"/>
                     </label>
 
-                    <button v-on:click="sendPhoto" class="btn-send-photo btn-primary">Appliquer</button>
+                    <button v-on:click="sendPhoto" :class="{'disabled': !file }" :disabled="!file" aria-disabled="true"
+                            class="btn-send-photo btn-primary">Appliquer</button>
                 </div>
             </div>
 
@@ -316,7 +320,7 @@
                 .container-photo {
                     width: 400px;
                     height: 270px;
-                    margin: 53px 0;
+                    margin: 50px 0;
                     overflow: hidden;
                     border: 1px solid lighten(#fbf0f0, 1%);
                     background-color: lighten(#fbf0f0, 1%);
@@ -327,7 +331,6 @@
 
                     img {
                         width: 100%;
-                        height: 100%;
                         object-fit: cover;
                         border-radius: 5px;
                     }
@@ -377,7 +380,10 @@
 
                     &:hover {
                         background-color: lighten(forestgreen, 5%);
-                    }
+                    }&.disabled {
+                         background-color: darkgrey;
+                         border: 1px solid darkgrey;
+                     }
                 }
             }
 

@@ -1,5 +1,5 @@
 <template>
-    <div class="container" >
+    <div class="container">
         <div class="row">
             <div class="col-1">
                 <router-link to="/profile">
@@ -11,27 +11,23 @@
                     <input v-on:click="togglePostPopup" type="text" placeholder="Dites bonjour !">
                 </div>
             </div>
-            <div class="show-post">
-                <button class="btn-recent btn-primary">Récent</button>
-                <button class="btn-populaire btn-primary">Populaire</button>
-            </div>
+
         </div>
-        <PostToEdit :reveal="reveal" :togglePostPopup="togglePostPopup"/>
+        <EditPost :reveal="reveal" :togglePostPopup="togglePostPopup"/>
     </div>
 </template>
 
 <script>
-   //import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
-    //import axios from "axios";
+    //import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
     import UserIcon from "../layout/UserIcon";
-   import PostToEdit from "./PostToEdit";
+    import EditPost from "./EditPost";
 
 
     export default {
         name: "CreatePost",
         components: {
             'UserIcon': UserIcon,
-            'PostToEdit': PostToEdit,
+            'EditPost': EditPost,
             //'font-awesome-icon': FontAwesomeIcon,
 
         },
@@ -58,7 +54,7 @@
         width: 1100px;
 
         .row {
-            margin: 50px 100px 115px 100px;
+            margin: 50px 150px 40px 150px;
             height: 100px;
             border-radius: 5px;
             padding: 25px 25px;
@@ -87,50 +83,6 @@
                 outline: none;
             }
         }
-
-        .show-post {
-            margin-top: 65px;
-
-            .btn-recent {
-                width: 180px;
-                height: 40px;
-                border-radius: 20px;
-                margin-right: 10px;
-                background-color: #f9abab;
-                color: #fff;
-                font-weight: bolder;
-                font-size: 1.2em;
-                border: 1px solid #f9abab;
-                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-                transition: all 0.4s ease-in-out;
-
-                &:hover {
-                    background-color: lighten(#f9abab, 2%);
-                    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.6);
-                }
-            }
-
-            .btn-populaire {
-                width: 180px;
-                height: 40px;
-                border-radius: 20px;
-                margin-right: 10px;
-                background-color: #f9abab !important;
-                color: #fff;
-                font-weight: bolder;
-                font-size: 1.2em;
-                border: 1px solid #f9abab;
-                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-                transition: all 0.4s ease-in-out;
-
-                &:hover {
-                    background-color: lighten(#f9abab, 2%);
-                    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.6);
-                }
-
-            }
-        }
-
     }
 
 </style>
