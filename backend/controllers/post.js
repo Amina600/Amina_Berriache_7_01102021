@@ -84,15 +84,8 @@ exports.getAllPostsPopulaire = async (req, res, next) => {
 // Mettre à jour un post
 exports.updatePost = async(req, res, next) => {
 
-    // Parser la requete
-    const newPost = req.file ?
-        {
-            ...JSON.parse(req.body.post),
-            urlMedia: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-        } : {
-            ...JSON.parse(req.body.post),
-            urlMedia: null
-        };
+    // Parser la requête
+    let newPost = JSON.parse(req.body.post);
 
     // Retrouver le post
     const post = await db.sequelize.models.Post.findOne({
@@ -101,11 +94,25 @@ exports.updatePost = async(req, res, next) => {
         }
     })
 
-    if (post.urlMedia) {
+    // Ajouter le nouveau urlMedia ou supprimer l'urlMedia si 'deleteFile' dans la requête
+    let changeMedia = false;
+    if (req.file) {
+        newPost.urlMedia = `${req.protocol}://${req.get('host')}/images/${req.file.filename}`;
+        changeMedia = true;
+    }
+    else if (newPost.deleteFile) {
+        newPost.urlMedia = null;
+        changeMedia = true;
+    }
+    delete newPost.deleteFile;
+
+    // Supprimer l'ancien fichier si nécessaire
+    if (changeMedia && post.urlMedia) {
         const filename = post.urlMedia.split('/images/')[1];
         fs.unlink(`images/${filename}`, () => {});
     }
 
+    // Mise à jour du Post
     post.update(newPost)
         .then(() => {
                 res.status(201).json({

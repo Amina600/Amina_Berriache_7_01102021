@@ -67,7 +67,8 @@
                 fileType: this.getFileType(this.postToEdit?.urlMedia),
                 content: this.postToEdit?.content || '',
                 file: null,
-                user
+                user,
+                deleteFile: false
             }
         },
         methods: {
@@ -79,7 +80,8 @@
             },
             clear: function () {
                 this.url = ''
-                this.$refs.fileUpload.value = null
+                this.$refs.fileUpload.value = null;
+                this.deleteFile = true;
             },
             getFileType: function(name) {
                 if (!name) return null;
@@ -91,6 +93,7 @@
                     id: this.postToEdit?.id,
                     content: this.content,
                     userId: this.user.id,
+                    deleteFile: this.deleteFile
                 };
 
                 // Request
