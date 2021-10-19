@@ -85,4 +85,27 @@
         }
     }
 
+    @media screen and (min-width: 300px) and (max-width: 992px) {
+        .container {
+            max-width: 100% !important;
+            padding: 0!important;
+            margin-top: 40px;
+            .row {
+                max-width: 100% !important;
+                margin: 0 !important;
+                height: 90px;
+                padding: 20px 20px 10px 20px;
+                flex-wrap: nowrap!important;
+                .col-11 {
+                    max-width: 100% !important;
+                }
+                .col-1 {
+                    margin-right: 5px;
+                }
+            }
+
+        }
+    }
+
+
 </style>

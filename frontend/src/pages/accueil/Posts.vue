@@ -1,8 +1,14 @@
 <template>
 
     <div class="show-post container">
-        <button v-on:click="recent" class="btn-recent btn-primary">Récent</button>
-        <button v-on:click="populaire" class="btn-populaire btn-primary">Populaire</button>
+        <button v-on:click="selectCategory('RECENT')" class="btn-category btn-primary"
+                :class="{active: category === 'RECENT'}">
+            Récent
+        </button>
+        <button v-on:click="selectCategory('POPULAIRE')" class="btn-category btn-primary"
+                :class="{active: category === 'POPULAIRE'}">
+            Populaire
+        </button>
     </div>
     <div class="container" :key="index" v-for="(post, index) in posts">
         <div class="row">
@@ -48,7 +54,8 @@
                 </p>
             </div>
             <div v-if="post.urlMedia" class="photo">
-                <img :src="post.urlMedia">
+                <img v-if="post.mediaType === 'IMAGE'" :src="post.urlMedia" alt="media"/>
+                <video controls v-if="post.mediaType === 'VIDEO'" :src="post.urlMedia"></video>
             </div>
             <div class="param">
                 <div class="flex">
@@ -100,7 +107,7 @@
                 posts: [],
                 myUser,
                 reveal: false,
-
+                category: 'RECENT'
             }
         },
         created() {
@@ -120,12 +127,13 @@
             },
             getAllPost() {
                 try {
-                    axios.get("post/")
+                    axios.get("post/"+ this.category)
                         .then((response) => {
                             this.posts = response.data.map((post) => {
                                 return {
                                     ...post,
                                     createdAt: moment(post.createdAt).format('lll'),
+                                    mediaType: post.urlMedia && post.urlMedia.slice(-3) === 'mp4' ? 'VIDEO' : 'IMAGE',
                                     iLiked: post.iLiked === '1',
                                     iDisliked: post.iDisliked === '1',
                                 }
@@ -198,35 +206,9 @@
                     commentCount: this.posts[index].commentCount + count
                 };
             },
-            recent() {
-                try {
-                    axios.get("post/")
-                        .then((response) => {
-                            this.posts = response.data.map((post) => {
-                                return {
-                                    ...post,
-                                    createdAt: moment(post.createdAt).format('lll')
-                                }
-                            });
-                        })
-                } catch (error) {
-                    console.error(error)
-                }
-            },
-            populaire() {
-                try {
-                    axios.get("post/populaire")
-                        .then((response) => {
-                            this.posts = response.data.map((post) => {
-                                return {
-                                    ...post,
-                                    createdAt: moment(post.createdAt).format('lll')
-                                }
-                            });
-                        })
-                } catch (error) {
-                    console.error(error)
-                }
+            selectCategory(category) {
+                this.category = category;
+                this.getAllPost();
             },
         }
     }
@@ -237,41 +219,21 @@
 
         padding: 0 160px;
 
-        .btn-recent {
+        .btn-category {
             width: 180px;
             height: 40px;
             border-radius: 20px;
             margin-right: 10px;
-            background-color: #f9abab;
+            background-color: lighten(#f9abab, 10%) !important;
             color: #fff;
             font-weight: bolder;
             font-size: 1.2em;
-            border: 1px solid #f9abab;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-            transition: all 0.4s ease-in-out;
+            border: 1px solid lighten(#f9abab, 10%);
+            box-shadow: 0 1px 5px rgba(0, 0, 0, 0.3);
 
-            &:hover {
-                background-color: lighten(#f9abab, 2%);
-                box-shadow: 0 1px 5px rgba(0, 0, 0, 0.6);
-            }
-        }
-
-        .btn-populaire {
-            width: 180px;
-            height: 40px;
-            border-radius: 20px;
-            margin-right: 10px;
-            background-color: #f9abab !important;
-            color: #fff;
-            font-weight: bolder;
-            font-size: 1.2em;
-            border: 1px solid #f9abab;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-            transition: all 0.4s ease-in-out;
-
-            &:hover {
-                background-color: lighten(#f9abab, 2%);
-                box-shadow: 0 1px 5px rgba(0, 0, 0, 0.6);
+            &.active, &:hover {
+                background-color: #f9abab !important;
+                border: 1px solid #f9abab;
             }
         }
     }
@@ -462,9 +424,29 @@
                     }
                 }
             }
-
-
         }
     }
+
+    @media screen and (min-width: 300px) and (max-width: 992px) {
+        .show-post {
+            max-width: 100% !important;
+            padding: 0 !important;
+            margin: 30px 0px !important;
+            text-align: center;
+
+        }
+        .container {
+            max-width: 100% !important;
+            padding: 0;
+            .row{
+                max-width: 100% !important;
+                margin: 0 !important;
+                padding: 10px 10px;
+
+            }
+        }
+
+    }
+
 
 </style>

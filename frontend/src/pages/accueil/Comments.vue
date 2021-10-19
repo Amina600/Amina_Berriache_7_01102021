@@ -2,7 +2,7 @@
     <div class="bloc-comment">
         <div class="comment" :key="index" v-for="(comment, index) in comments">
             <div>
-                <UserIcon :user="comment.User" :size="40"></UserIcon>
+                <UserIcon :user="comment.User" :size="50"></UserIcon>
             </div>
 
             <div class="comment-post">
@@ -30,7 +30,7 @@
         <div class="input-comment">
             <div class="comment-post">
                 <router-link to="/profile">
-                    <UserIcon :user="user" :size="40"></UserIcon>
+                    <UserIcon :user="user" :size="50"></UserIcon>
                 </router-link>
                 <div class="content-comment">
                     <input v-model="message" type="text" placeholder="Écrivez un commentaire…">
@@ -139,6 +139,7 @@
 
                     .header-user {
                         display: flex;
+                        flex-direction: column;
                         align-items: baseline;
 
                         p {
@@ -147,7 +148,6 @@
 
                         .date {
                             font-size: 0.7em;
-                            margin-left: 10px;
 
                         }
                     }
@@ -236,10 +236,5 @@
                 border: 1px solid darkgrey;
             }
         }
-
     }
-
-
-
-
 </style>

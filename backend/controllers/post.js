@@ -29,9 +29,19 @@ exports.createPost = async (req, res, next) => {
 // Récupérer tous les posts
 exports.getAllPosts = async (req, res, next) => {
 
+    let order;
+    const category = req.params.category;
+
+    if (category === 'RECENT') {
+        order = ['createdAt', 'DESC'];
+    }
+    else if (category === 'POPULAIRE') {
+        order = [db.Sequelize.literal('likeCount'), 'DESC'];
+    }
+
     await db.sequelize.models.Post.findAll({
         order: [
-            ['createdAt', 'DESC'],
+            order,
         ],
         include: [
             "User",

@@ -6,6 +6,7 @@ const MIME_TYPES = {
     'image/jpeg': 'jpg',
     'image/png': 'png',
     'image/gif': 'gif',
+    'video/mp4': 'mp4',
 
 };
 //Enregistrement des fichiers dans le dossier images

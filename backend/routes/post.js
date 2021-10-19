@@ -12,7 +12,7 @@ const likeCtrl = require('../controllers/like');
 router.post('/', auth, multer, postCtrl.createPost);
 //
 // Récupérer tous les posts
-router.get('/', auth, postCtrl.getAllPosts);
+router.get('/:category', auth, postCtrl.getAllPosts);
 //
 // Récupérer tous les posts
 router.get('/populaire', auth, postCtrl.getAllPostsPopulaire);

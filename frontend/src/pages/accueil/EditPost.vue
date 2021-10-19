@@ -2,7 +2,7 @@
     <div class="bloc-post" v-if="reveal">
         <div class="overlay" v-on:click="togglePostPopup"></div>
 
-        <div class="post card">
+        <div class="post">
             <div class="header">
                 <div class="title">
                     <h4>Créer une publication</h4>
@@ -17,11 +17,12 @@
                         <p>{{user.pseudo}}</p>
                     </div>
                 </div>
-                <div class="message scrollbar">
-                            <textarea name="message-post" v-model="content" id="message-post" cols="50" rows="3"
+                <div class="message">
+                            <textarea name="message-post" v-model="content" id="message-post" cols="45" rows="3"
                                       placeholder="Dites bonjour !"></textarea>
                     <div id="preview">
-                        <img v-if="url" :src="url"/>
+                        <video controls v-if="url && fileType === 'VIDEO'" :src="url"/>
+                        <img v-if="url && fileType === 'IMAGE'" :src="url"/>
                         <button type="button" v-if="url" v-on:click="clear"
                                 class="btn-close btn btn-preview">
                         </button>
@@ -32,7 +33,7 @@
                     <label for="file-input">
                         <font-awesome-icon class="icon-select" icon="image"/>
                     </label>
-                    <input id="file-input" type="file" accept="image/*" ref="fileUpload"
+                    <input id="file-input" type="file" accept="image/*,video/mp4" ref="fileUpload"
                            @change="onFileChange"/>
 
 
@@ -62,9 +63,8 @@
         data() {
             let user = JSON.parse(localStorage.getItem('user'));
             return {
-                //url: this.postToEdit?.urlMedia || null,
-                //content: this.postToEdit?.content || '',
                 url: this.postToEdit?.urlMedia || null,
+                fileType: this.getFileType(this.postToEdit?.urlMedia),
                 content: this.postToEdit?.content || '',
                 file: null,
                 user
@@ -75,14 +75,20 @@
             onFileChange(e) {
                 this.file = e.target.files[0];
                 this.url = URL.createObjectURL(this.file);
+                this.fileType = this.getFileType(this.file.name);
             },
             clear: function () {
                 this.url = ''
                 this.$refs.fileUpload.value = null
             },
+            getFileType: function(name) {
+                if (!name) return null;
+                else if (name.slice(-3) === 'mp4') return 'VIDEO';
+                else return 'IMAGE';
+            },
             savePost: async function () {
                 let post = {
-                    id: this.postToEdit.id,
+                    id: this.postToEdit?.id,
                     content: this.content,
                     userId: this.user.id,
                 };
@@ -123,6 +129,7 @@
         display: flex;
         justify-content: center;
         align-items: center;
+        z-index: 100;
 
         .overlay {
             background: rgba(245, 241, 241, 0.589);
@@ -134,12 +141,18 @@
         }
 
         .post {
+            height: calc(100vh - 10%);
+            max-height: 600px;
+            width: 500px;
+            max-width: 100vw;
+            overflow-y: scroll;
             background: white;
             color: #333;
             position: fixed;
-            top: 15%;
-            width: 450px !important;
+            top: 5%;
             box-shadow: 0 0 7px 0 rgb(150, 149, 149);
+            display: flex;
+            flex-direction: column;
 
             .header {
                 display: flex;
@@ -147,7 +160,7 @@
                 align-items: flex-start;
                 border-bottom: 0.2px solid rgb(212, 208, 208);
                 width: 100%;
-                padding: 15px 10px 15px 80px;
+                padding: 15px 10px 15px 15px;
 
                 h4 {
                     margin-bottom: 0 !important;
@@ -167,6 +180,9 @@
 
             .content {
                 padding: 15px;
+                display: flex;
+                flex-direction: column;
+                flex-grow: 1;
 
                 .user {
 
@@ -184,11 +200,9 @@
                 }
 
                 .message {
-
-                    #scrollBar {
-                        overflow-y: auto;
-                        max-height: 300px;
-                    }
+                    flex-grow: 1;
+                    display: flex;
+                    flex-direction: column;
 
                     textarea {
                         resize: none;
@@ -196,19 +210,22 @@
                         color: black;
                         font-size: 1em;
                         outline: none;
+                        flex-grow: 1;
                     }
+
                     #preview {
                         display: flex;
                         justify-content: center;
                         align-items: center;
                         position: relative;
                     }
+
                     #preview img {
-                        width: 100%;
-                        object-fit: cover;
                         border: 1px solid #cccccc;
                         border-radius: 5px;
+                        max-height: 50vh;
                     }
+
                     .btn-preview {
                         position: absolute;
                         right: 4px;
@@ -218,6 +235,7 @@
                         background-color: whitesmoke;
                     }
                 }
+
                 .layout {
                     display: flex;
                     justify-content: space-between;
@@ -260,15 +278,40 @@
                     }
                 }
             }
-
-            .scrollbar {
-                overflow-y: scroll;
-                max-height: 350px;
-            }
-
-
         }
     }
 
+    @media screen and (min-width: 300px) and (max-width: 992px) {
+        .bloc-post {
+           .overlay{
+               background-color: white;
+           }
+            .post {
 
+                top: 0;
+                max-width: 100vw !important;
+                height: 100% !important;
+
+                .content {
+                    .layout {
+                        flex-direction: column;
+                        align-items: flex-start;
+                        margin-top: 20px;
+
+                        .icon-select {
+                            font-size: 3.5em;
+                        }
+
+                        .btn-post {
+                            width: 100%;
+                            margin-top: 10px;
+                            padding: 10px;
+
+                        }
+                    }
+                }
+
+            }
+        }
+    }
 </style>

@@ -20,11 +20,13 @@
                 <div class="btns-photo">
                     <label class="custom-file-upload">
                         Ajouter une photo
-                        <input id="file-input" type="file" accept=".jpg, .jpeg, .png" ref="fileUpload" @change="onFileChange"/>
+                        <input id="file-input" type="file" accept=".jpg, .jpeg, .png" ref="fileUpload"
+                               @change="onFileChange"/>
                     </label>
 
                     <button v-on:click="sendPhoto" :class="{'disabled': !file }" :disabled="!file" aria-disabled="true"
-                            class="btn-send-photo btn-primary">Appliquer</button>
+                            class="btn-send-photo btn-primary">Appliquer
+                    </button>
                 </div>
             </div>
 
@@ -83,7 +85,6 @@
         </div>
         <div class="bloc-register" v-if="showDelete">
             <div class="overlay" v-on:click="toggleDelete"></div>
-
             <div class="register card">
                 <div class="header">
                     <div class="title">
@@ -196,8 +197,7 @@
                 } catch (error) {
                     if (error.response.status === 400) {
                         this.signUpErrorPseudo = error.response.data.message;
-                    }
-                    else {
+                    } else {
                         this.signUpError = 'Une erreur s\'est produite'
                     }
                 }
@@ -223,8 +223,7 @@
                 } catch (error) {
                     if (error.response.status === 400) {
                         this.signUpErrorPassword = error.response.data.message;
-                    }
-                    else {
+                    } else {
                         this.signUpError = 'Une erreur s\'est produite'
                     }
                 }
@@ -269,6 +268,7 @@
                     display: flex;
                     flex-direction: column;
                     margin-top: 15px;
+                    text-align: left;
 
                     .form-group {
                         margin-bottom: 10px;
@@ -310,7 +310,6 @@
                         border: 1px solid forestgreen;
                         background-color: forestgreen;
                         color: white;
-                        margin-left: 218px;
 
                         &:hover {
                             background-color: lighten(forestgreen, 5%);
@@ -330,7 +329,8 @@
                     border-bottom: 1px solid grey;
                     width: 100%;
                     display: flex;
-                    .user{
+
+                    .user {
                         font-size: 1.5em;
                         margin-right: 7px;
                     }
@@ -366,7 +366,6 @@
                     margin-top: 15px;
                     margin-bottom: 10px;
                     border-radius: 3px;
-                    border: 1px solid #ccc;
                     display: inline-block;
                     padding: 6px 12px;
                     cursor: pointer;
@@ -398,10 +397,12 @@
 
                     &:hover {
                         background-color: lighten(forestgreen, 5%);
-                    }&.disabled {
-                         background-color: darkgrey;
-                         border: 1px solid darkgrey;
-                     }
+                    }
+
+                    &.disabled {
+                        background-color: darkgrey;
+                        border: 1px solid darkgrey;
+                    }
                 }
             }
 
@@ -481,6 +482,7 @@
                         font-size: 1.1em;
                         color: black;
                     }
+
                     .btn-close {
                         font-size: 1em;
                         color: rgb(212, 208, 208);
@@ -528,8 +530,40 @@
                         }
                     }
                 }
+            }
 
+        }
+    }
+    @media screen and (min-width: 300px) and (max-width: 575px) {
+        .container {
+            max-width: 100% !important;
+            padding: 0!important;
+            .row {
+                max-width: 100% !important;
+                padding: 0!important;
+                flex-direction: column;
+                justify-content: center;
+                background-color: white;
 
+                .col {
+                    width: 100% !important;
+                    padding: 15px 15px;
+                    box-shadow: 0 0 8px darkgrey;
+                }
+            }
+
+        }
+    }
+    @media screen and (min-width: 576px) and (max-width: 992px) {
+        .container {
+            .row {
+                justify-content: center;
+
+                .col {
+                    padding: 15px 15px;
+                    box-shadow: 0 0 8px darkgrey;
+
+                }
             }
 
         }
