@@ -5,6 +5,7 @@
             <div class="col">
                 <div class="content">
                     <header>
+                        <font-awesome-icon icon="user" class="user"/>
                         <h4>Photo de profile</h4>
                     </header>
                     <div class="container-photo">
@@ -19,7 +20,7 @@
                 <div class="btns-photo">
                     <label class="custom-file-upload">
                         Ajouter une photo
-                        <input id="file-input" type="file" accept="image/*" ref="fileUpload" @change="onFileChange"/>
+                        <input id="file-input" type="file" accept=".jpg, .jpeg, .png" ref="fileUpload" @change="onFileChange"/>
                     </label>
 
                     <button v-on:click="sendPhoto" :class="{'disabled': !file }" :disabled="!file" aria-disabled="true"
@@ -41,9 +42,10 @@
                         <div v-for="error of v$.pseudo.$errors" :key="error.$uid" class="error">
                             <span>{{error.$message}}</span>
                         </div>
-                        <div v-if="signUpError" class="error2">
-                            <span>{{signUpError}}</span>
+                        <div v-if="signUpErrorPseudo" class="error2">
+                            <span>{{signUpErrorPseudo}}</span>
                         </div>
+
                     </div>
                     <button class="btn-send-data btn-primary">Appliquer</button>
                 </form>
@@ -63,8 +65,8 @@
                         <div v-for="error of v$.newPassword.$errors" :key="error.$uid" class="error">
                             <span>{{error.$message}}</span>
                         </div>
-                        <div v-if="signUpError" class="error2">
-                            <span>{{signUpError}}</span>
+                        <div v-if="signUpErrorPassword" class="error2">
+                            <span>{{signUpErrorPassword}}</span>
                         </div>
                     </div>
 
@@ -87,9 +89,10 @@
                     <div class="title">
                         <p>Voulez vous vraiment supprimer votre compte?</p>
                     </div>
+                    <div v-on:click="toggleDelete" class="btn-close btn "></div>
                 </div>
                 <div class="btns-popup">
-                    <button v-on:click="deleteCompte" class="btn-yes">Oui</button>
+                    <button v-on:click="deleteCompte" class="btn-yes">Confirmer</button>
                     <button v-on:click="toggleDelete" class="btn-no">Annuler</button>
 
                 </div>
@@ -124,7 +127,8 @@
                 file: null,
                 myUser,
                 pseudo: '',
-                signUpError: null,
+                signUpErrorPseudo: null,
+                signUpErrorPassword: null,
                 password: '',
                 newPassword: '',
             }
@@ -190,8 +194,12 @@
 
                     this.$router.go();
                 } catch (error) {
-                    if (error.response.status === 400) this.signUpError = error.response.data.message;
-                    else this.signUpError = 'Une erreur s\'est produite'
+                    if (error.response.status === 400) {
+                        this.signUpErrorPseudo = error.response.data.message;
+                    }
+                    else {
+                        this.signUpError = 'Une erreur s\'est produite'
+                    }
                 }
             },
             updatePassword: async function () {
@@ -210,9 +218,15 @@
                     })
                     this.password = null;
                     this.newPassword = null;
+                    this.v$.password.$reset();
+                    this.v$.newPassword.$reset();
                 } catch (error) {
-                    if (error.response.status === 400) this.signUpError = error.response.data.message;
-                    else this.signUpError = 'Une erreur s\'est produite'
+                    if (error.response.status === 400) {
+                        this.signUpErrorPassword = error.response.data.message;
+                    }
+                    else {
+                        this.signUpError = 'Une erreur s\'est produite'
+                    }
                 }
             },
             deleteCompte: async function () {
@@ -233,19 +247,20 @@
 
 <style scoped lang="scss">
     .container {
-        width: 1100px;
+        width: 800px;
         margin-top: 40px;
 
         .row {
             border-radius: 5px;
-            padding: 25px 25px;
+            padding: 10px 10px;
             background-color: lighten(#fbf0f0, 1%);
 
             .col {
                 background-color: white;
-                margin: 15px;
+                width: 340px;
+                margin: 10px;
                 border-radius: 5px;
-                padding: 25px 25px;
+                padding: 15px 15px;
 
                 form {
                     border-radius: 5px;
@@ -256,7 +271,7 @@
                     margin-top: 15px;
 
                     .form-group {
-                        margin-bottom: 15px;
+                        margin-bottom: 10px;
 
                         label {
                             font-weight: bold;
@@ -264,8 +279,7 @@
 
                         input {
                             margin-top: 10px;
-                            padding: 10px;
-                            width: 100%;
+                            padding: 7px;
                         }
                     }
 
@@ -289,14 +303,14 @@
 
                     .btn-send-data {
                         border-radius: 3px;
-                        padding: 8px;
+                        padding: 5px;
                         width: 100px;
-                        font-size: 1.1em;
+                        font-size: 1em;
                         font-weight: 600;
                         border: 1px solid forestgreen;
                         background-color: forestgreen;
                         color: white;
-                        margin-left: 320px;
+                        margin-left: 218px;
 
                         &:hover {
                             background-color: lighten(forestgreen, 5%);
@@ -315,12 +329,17 @@
                     margin-bottom: 10px;
                     border-bottom: 1px solid grey;
                     width: 100%;
+                    display: flex;
+                    .user{
+                        font-size: 1.5em;
+                        margin-right: 7px;
+                    }
                 }
 
                 .container-photo {
-                    width: 400px;
-                    height: 270px;
-                    margin: 50px 0;
+                    width: 335px;
+                    height: 345px;
+                    margin: 10px 0;
                     overflow: hidden;
                     border: 1px solid lighten(#fbf0f0, 1%);
                     background-color: lighten(#fbf0f0, 1%);
@@ -340,13 +359,12 @@
             }
 
             .btns-photo {
-                margin-top: 36px;
                 display: flex;
                 justify-content: space-between;
 
                 .custom-file-upload {
-                    margin-top: 25px;
-                    margin-bottom: 15px;
+                    margin-top: 15px;
+                    margin-bottom: 10px;
                     border-radius: 3px;
                     border: 1px solid #ccc;
                     display: inline-block;
@@ -368,8 +386,8 @@
                 }
 
                 .btn-send-photo {
-                    margin-top: 25px;
-                    margin-bottom: 15px;
+                    margin-top: 15px;
+                    margin-bottom: 10px;
                     border-radius: 3px;
                     padding: 8px;
                     font-size: 1.1em;
@@ -404,8 +422,8 @@
                 justify-content: center;
 
                 .btn-deleted {
-                    margin-top: 35px;
-                    margin-bottom: 15px;
+                    margin-top: 25px;
+                    margin-bottom: 10px;
                     border-radius: 3px;
                     padding: 8px;
                     font-size: 1.1em;
@@ -445,10 +463,10 @@
             .register {
                 background: white;
                 color: #333;
-                padding: 30px;
+                padding: 25px;
                 position: fixed;
                 top: 20%;
-                width: 450px !important;
+                width: 500px !important;
                 box-shadow: 0 0 7px 0 rgb(150, 149, 149);
 
                 .header {
@@ -463,6 +481,15 @@
                         font-size: 1.1em;
                         color: black;
                     }
+                    .btn-close {
+                        font-size: 1em;
+                        color: rgb(212, 208, 208);
+                        font-weight: 700;
+                        border-radius: 30px;
+                        padding: 10px 10px;
+                        background-color: #cccccc;
+
+                    }
                 }
 
                 .btns-popup {
@@ -471,8 +498,8 @@
 
                     .btn-yes {
                         border-radius: 3px;
-                        padding: 8px;
-                        font-size: 1.1em;
+                        padding: 5px;
+                        font-size: 1em;
                         font-weight: 600;
                         border: 1px solid #fc3c14;
                         background-color: #fc3c14;
@@ -488,8 +515,8 @@
                     .btn-no {
 
                         border-radius: 3px;
-                        padding: 8px;
-                        font-size: 1.1em;
+                        padding: 5px;
+                        font-size: 1em;
                         font-weight: 600;
                         border: 1px solid forestgreen;
                         background-color: forestgreen;
