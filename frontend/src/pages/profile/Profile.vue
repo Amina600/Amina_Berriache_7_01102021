@@ -534,7 +534,7 @@
 
         }
     }
-    @media screen and (min-width: 300px) and (max-width: 575px) {
+    @media screen and (max-width: 575px) {
         .container {
             max-width: 100% !important;
             padding: 0!important;
@@ -554,7 +554,7 @@
 
         }
     }
-    @media screen and (min-width: 576px) and (max-width: 992px) {
+    @media screen and (min-width: 576px) and (max-width: 768px) {
         .container {
             .row {
                 justify-content: center;

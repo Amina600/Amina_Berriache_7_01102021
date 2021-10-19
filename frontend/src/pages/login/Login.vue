@@ -235,7 +235,7 @@
 
         }
     }
-    @media screen and (min-width: 300px) and (max-width: 450px) {
+    @media screen and (max-width: 450px) {
         .container1{
             width: 100% !important;
             padding: 0!important;

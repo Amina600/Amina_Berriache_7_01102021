@@ -220,7 +220,7 @@
         }
     }
 
-    @media screen and (min-width: 300px) and (max-width: 992px) {
+    @media screen and (max-width: 768px) {
         header {
             display: none;
             .container{

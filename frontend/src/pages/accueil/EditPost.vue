@@ -281,7 +281,7 @@
         }
     }
 
-    @media screen and (min-width: 300px) and (max-width: 992px) {
+    @media screen and (max-width: 450px) {
         .bloc-post {
            .overlay{
                background-color: white;

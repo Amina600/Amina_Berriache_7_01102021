@@ -210,7 +210,7 @@
             }
         }
     }
-    @media screen and (min-width: 300px) and (max-width: 460px) {
+    @media screen and (max-width: 460px) {
         .bloc-register {
             .overlay{
                 background-color: white;

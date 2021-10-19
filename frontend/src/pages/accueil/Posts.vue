@@ -427,7 +427,12 @@
         }
     }
 
-    @media screen and (min-width: 300px) and (max-width: 992px) {
+    @media screen and (max-width: 768px) {
+
+        .btn-category {
+            margin-bottom: 10px;
+        }
+
         .show-post {
             max-width: 100% !important;
             padding: 0 !important;
