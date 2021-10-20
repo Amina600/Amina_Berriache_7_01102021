@@ -4,6 +4,7 @@ node_modules
 .env
 config.json
 images
+!.gitkeep
 
 
 # local env files

@@ -223,10 +223,18 @@
                         position: relative;
                     }
 
-                    #preview img {
+                    img {
                         border: 1px solid #cccccc;
                         border-radius: 5px;
-                        max-height: 50vh;
+                        width: 100%;
+                        max-height: 300px;
+                        object-fit: cover;
+                    }
+                    video{
+                        border: 1px solid #cccccc;
+                        border-radius: 5px;
+                        width: 100%;
+                        object-fit: cover;
                     }
 
                     .btn-preview {

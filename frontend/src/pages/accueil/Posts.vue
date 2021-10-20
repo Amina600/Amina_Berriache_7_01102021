@@ -224,16 +224,17 @@
             height: 40px;
             border-radius: 20px;
             margin-right: 10px;
-            background-color: lighten(#f9abab, 10%) !important;
-            color: #fff;
-            font-weight: bolder;
+            background-color: lighten(#f9abab, 13%) !important;
+            color: #f9abab;
+            font-weight: 600;
             font-size: 1.2em;
-            border: 1px solid lighten(#f9abab, 10%);
+            border: 1px solid lighten(#f9abab, 13%);
             box-shadow: 0 1px 5px rgba(0, 0, 0, 0.3);
 
             &.active, &:hover {
                 background-color: #f9abab !important;
                 border: 1px solid #f9abab;
+                color: #fff;
             }
         }
     }
@@ -371,6 +372,10 @@
             }
 
             img {
+                max-width: 100%;
+                object-fit: cover;
+            }
+            video{
                 max-width: 100%;
                 object-fit: cover;
             }
