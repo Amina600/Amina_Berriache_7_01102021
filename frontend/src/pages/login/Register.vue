@@ -101,6 +101,7 @@
                         email: this.email,
                         password: this.password
                     })
+                    // Après avoir envoyé le post, la popup se ferme
                     this.toggleRegisterPopup();
                 } catch (error) {
                     if (error.response.status === 400) this.signUpError = error.response.data.message;
@@ -207,6 +208,39 @@
                 text-align: center;
                 margin-bottom: 20px;
 
+            }
+        }
+    }
+    @media screen and (max-width: 460px) {
+        .bloc-register {
+            .overlay{
+                background-color: white;
+            }
+            .register {
+                top: 0;
+                max-width: 120vw !important;
+                height: 100% !important;
+                width: 100% !important;
+
+
+                .header {
+                    border-bottom: 0.2px solid rgb(212, 208, 208);
+                    width: 100%;
+                    padding: 0 10px 10px 0;
+
+                    h4 {
+                        margin-bottom: 0 !important;
+                    }
+
+                    .btn-close {
+                        font-size: 1em;
+                        color: rgb(212, 208, 208);
+                        font-weight: 700;
+                        border-radius: 30px;
+                        padding: 10px 10px;
+                        background-color: #cccccc;
+                    }
+                }
             }
         }
     }

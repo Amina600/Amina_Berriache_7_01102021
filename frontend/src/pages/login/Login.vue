@@ -11,7 +11,7 @@
 
                 <div class="col-1"></div>
 
-                <div class="col">
+                <div class="col-5">
                     <div class="card">
                         <!--Login form-->
                         <form @submit.prevent="handleSubmit">
@@ -70,8 +70,8 @@
                 reveal: false,
                 loginEmail: '',
                 loginPassword: '',
-                loginError: null
-            };
+                loginError: null,
+            }
         },
         components: {
             Register
@@ -102,10 +102,11 @@
                     const response = await axios.post('auth/login', {
                         email: this.loginEmail,
                         password: this.loginPassword
-
                     })
                     // Sauvegarde du token et redirection vers Accueil
-                    localStorage.setItem('token', response.data.token);
+                    localStorage.setItem('user', JSON.stringify(response.data));
+                    // Ajout du token dans axios
+                    axios.defaults.headers.common [ "Authorization"] = 'Bearer ' + response.data.token;
                     this.$router.push('./accueil');
                 } catch (error) {
                     if (error.response.status === 400) this.loginError = error.response.data.message;
@@ -116,13 +117,14 @@
     }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
     .groupomania {
         display: flex;
         flex-direction: column;
         justify-content: flex-start;
         align-items: center;
+        text-align: center;
+        width: 450px!important;
 
         img {
             width: 350px;
@@ -134,16 +136,22 @@
     }
 
     .container1 {
-        margin: 150px;
+        padding: 0!important;
+        margin: 0!important;
     }
 
     .container {
-        .col {
-            text-align: center;
+        margin-top: 100px;
+        .row{
+            justify-content: center;
+        }
+        .col-5 {
+            width: 450px!important;
         }
 
         .card {
             padding: 15px;
+            width: 450px!important;
             box-shadow: 0 0 7px 0 rgb(150, 149, 149);
 
             .form-group {
@@ -226,6 +234,84 @@
 
         }
     }
+    @media screen and (max-width: 450px) {
+        .container1{
+            width: 100% !important;
+            padding: 0!important;
+            margin: 0!important;
+        }
+        .container {
+            margin-top: 0!important;
+            width: 100% !important;
+            padding: 0!important;
+            .row {
+                width: 100% !important;
+                margin: 0 !important;
+                padding: 0!important;
+                display: flex;
+                align-items: center;
+                flex-direction: column;
+                .col-1{
+                    margin: 0 !important;
+                    padding: 0!important;
+                }
+                .groupomania{
+                    width: 100%;
+                    margin: 20px 0;
+                    text-align: center;
+                }
+                .col-5{
+                    margin: 0 !important;
+                    padding: 0!important;
+
+
+                    .card{
+                        box-shadow: none;
+                    }
+
+                }
+            }
+
+        }
+    }
+    @media screen and (min-width: 451px) and (max-width: 1228px) {
+        .container1{
+            padding: 0!important;
+            margin: 0!important;
+        }
+        .container {
+            margin-top: 0!important;
+            padding: 0!important;
+            max-width: 100% !important;
+            .row {
+                max-width: 100% !important;
+                margin: 0 !important;
+                padding: 0!important;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                flex-wrap: nowrap!important;
+                .col-1{
+                    margin: 0 !important;
+                    padding: 0!important;
+                }
+                .groupomania{
+                    max-width: 100%;
+                    margin: 20px 0;
+                    text-align: center;
+                }
+                .col-5{
+                    max-width: 420px!important;
+                    .card{
+                        max-width: 400px!important;
+                    }
+
+                }
+            }
+
+        }
+    }
+
 
 
 </style>

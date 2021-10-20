@@ -1,7 +1,7 @@
+const db = require('../models');
 const bcrypt = require('bcrypt');
 const cryptoJS = require("crypto-js");
 const jwt = require('jsonwebtoken');
-const sequelize = require('../database');
 
 // Clé secrète pour l'email
 const key = cryptoJS.enc.Hex.parse(process.env.SECRET_TOKEN);
@@ -13,6 +13,7 @@ const encryptEmail = (string) => {
 };
 
 exports.signup = async (req, res, next) => {
+    // Récupération de la requête
     const body = req.body;
     // Vérifie si le mot de passe est correcte
     if (body.password.length < 6 || body.password.length > 250) {
@@ -20,27 +21,27 @@ exports.signup = async (req, res, next) => {
         return;
     }
     // Vérifie si le pseudo existe dans la base de donnée
-    const pseudoExists = await sequelize.models.User.findOne({
+    const pseudoExists = await db.sequelize.models.User.findOne({
         where: {
             pseudo: body.pseudo
         }
     });
     // Vérifier si l'email existe dans la base de donnée
-    const emailExists = await sequelize.models.User.findOne({
+    const emailExists = await db.sequelize.models.User.findOne({
         where: {
             email: encryptEmail(body.email)
         }
     });
 
     if (pseudoExists) {
-        res.status(400).json({message: "ce pseudo est déjà pris !"});
+        res.status(400).json({message: "Ce pseudo est déjà pris !"});
         return;
     } else if (emailExists) {
         res.status(400).json({message: "Cet email est déjà pris !"});
         return;
     }
 
-    // Création du user
+   // Hasher le mot de passe
     bcrypt.hash(body.password, 10)
         .then(hash => {
             const user = {
@@ -49,9 +50,10 @@ exports.signup = async (req, res, next) => {
                 password: hash,
                 isAdmin: false
             };
-            sequelize.models.User.create(user)
+            // Création du user
+            db.sequelize.models.User.create(user)
                 .then(() => res.status(201).json({message: 'Utilisateur créé !'}))
-                .catch(error => res.status(500).json({error}));
+                .catch(error => res.status(500).json({error}) );
         })
         .catch(function (err) {
             res.status(500).json({message: 'Error server'});
@@ -59,9 +61,9 @@ exports.signup = async (req, res, next) => {
         });
 };
 
-exports.login = (req, res) => {
-
-    sequelize.models.User.findOne({
+exports.login = async (req, res) => {
+    // Retrouver l'email
+    await db.sequelize.models.User.findOne({
         where: {
             email: encryptEmail(req.body.email)
         }
@@ -75,11 +77,12 @@ exports.login = (req, res) => {
                     return res.status(400).json({message: 'Mot de passe incorrect !'});
                 }
                 res.status(200).json({
-                    userId: user.id,
+                    id: user.id,
                     pseudo: user.pseudo,
                     isAdmin: user.isAdmin,
+                    profileUrl: user.profileUrl,
                     token: jwt.sign(
-                        {userId: user.id},
+                        {userId: user.id, isAdmin: user.isAdmin},
                         process.env.SECRET_TOKEN,
                         {expiresIn: '24h'}
                     )
