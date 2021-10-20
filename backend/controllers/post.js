@@ -1,11 +1,11 @@
 const db = require('../models');
-// file system donne accès aux fonctions qui permettent de modifier le système de fichiers
 const fs = require('fs');
 
-// Créer un post et enregistrement dans la base des données
+// Créer un post et enregistrement dans la table de Posts
 exports.createPost = async (req, res, next) => {
-
+   // Parser la requête
     const postObject = JSON.parse(req.body.post);
+
     if (postObject == null) {
         return res.status(400).send({
             message: "Votre message createPost ne peut pas être vide"
@@ -17,7 +17,7 @@ exports.createPost = async (req, res, next) => {
         urlMedia: req.body.post && req.file ? `${req.protocol}://${req.get('host')}/images/${req.file.filename}` : null,
     };
 
-    //Enregistre le post dans la base de données
+    //Enregistrement du post
     await db.sequelize.models.Post.create(newPost)
         .then(() => res.status(201).json({message: 'Post enregistré !'}))
         .catch(function (err) {
@@ -26,17 +26,18 @@ exports.createPost = async (req, res, next) => {
         });
 };
 
-// Récupérer tous les posts
+// Récupérer tous les posts (populaire ou récent)
 exports.getAllPosts = async (req, res, next) => {
 
-    let order;
     const category = req.params.category;
 
+    // order change en fonction de category
+    let order;
     if (category === 'RECENT') {
-        order = ['createdAt', 'DESC'];
+        order = ['createdAt', 'DESC'];  // En fonction de la date de création
     }
     else if (category === 'POPULAIRE') {
-        order = [db.Sequelize.literal('likeCount'), 'DESC'];
+        order = [db.Sequelize.literal('likeCount'), 'DESC']; // En fonction du nombre de likes
     }
 
     await db.sequelize.models.Post.findAll({
@@ -50,14 +51,19 @@ exports.getAllPosts = async (req, res, next) => {
         ],
         attributes: {
             include: [
+                // Compte le nombre de commentaire
                 [db.Sequelize.fn("COUNT", db.Sequelize.col('Comments.id')), "commentCount"],
+                // Compte le nombre de likes
                 [db.Sequelize.fn("SUM", db.Sequelize.literal("if(`Likes`.`isLike` = 1, 1, 0)")), "likeCount"],
+                // Compte le nombre de dislikes
                 [db.Sequelize.fn("SUM", db.Sequelize.literal("if(`Likes`.`isLike` = 0, 1, 0)")), "dislikeCount"],
+                // Ajoute un champs "iLiked" = 0 (l'utilisateuu n'a pas like ce post) | 1 (l'utilisateur a déjà like)
                 [
                     db.Sequelize.fn("SUM",
                     db.Sequelize.literal("if(`Likes`.`isLike` = 1 AND `Likes`.`userId` = "+req.auth.userId+", 1, 0)")),
                     "iLiked"
                 ],
+                // Ajoute un champs "iDisliked" = 0 (l'utilisateuu n'a pas dislike ce post) | 1 (l'utilisateur a déjà dislike)
                 [
                     db.Sequelize.fn("SUM",
                     db.Sequelize.literal("if(`Likes`.`isLike` = 0 AND `Likes`.`userId` = "+req.auth.userId+", 1, 0)")),
@@ -71,16 +77,7 @@ exports.getAllPosts = async (req, res, next) => {
             res.status(200).json(newPost);
         })
 };
-// Récupérer tous les posts
-exports.getAllPostsPopulaire = async (req, res, next) => {
 
-    await db.sequelize.models.Post.findAll({
-
-    })
-        .then((newPost) => {
-            res.status(200).json(newPost);
-        })
-};
 // Mettre à jour un post
 exports.updatePost = async(req, res, next) => {
 
@@ -95,19 +92,22 @@ exports.updatePost = async(req, res, next) => {
     })
 
     // Ajouter le nouveau urlMedia ou supprimer l'urlMedia si 'deleteFile' dans la requête
-    let changeMedia = false;
+    let deleteMedia;
+
+    // Si nouveau file
     if (req.file) {
         newPost.urlMedia = `${req.protocol}://${req.get('host')}/images/${req.file.filename}`;
-        changeMedia = true;
+        deleteMedia = true;
     }
+    // Si le user demande de supprimer le media
     else if (newPost.deleteFile) {
         newPost.urlMedia = null;
-        changeMedia = true;
+        deleteMedia = true;
     }
     delete newPost.deleteFile;
 
     // Supprimer l'ancien fichier si nécessaire
-    if (changeMedia && post.urlMedia) {
+    if (deleteMedia && post.urlMedia) {
         const filename = post.urlMedia.split('/images/')[1];
         fs.unlink(`images/${filename}`, () => {});
     }
@@ -127,16 +127,17 @@ exports.updatePost = async(req, res, next) => {
     );
 };
 
-//Suppression une sauce spécifique
-exports.deletePost = (req, res, next) => {
+//Suppression d'un post
+exports.deletePost = async (req, res, next) => {
+    // Récupération l'id du post
     const postId = parseInt(req.params.id)
-    db.sequelize.models.Post.findOne({
+    // Retrouver le post dans la table
+    await db.sequelize.models.Post.findOne({
         where: {
             id: postId,
         }
     })
         .then( post => {
-
             // Vérification si l'utilisateur est admin ou le créateur du post
             if (!req.auth.isAdmin && post.userId !== req.auth.userId) {
                 res.status(403).json({
@@ -144,8 +145,7 @@ exports.deletePost = (req, res, next) => {
                 });
                 return;
             }
-
-            // Suppression du média
+            // Suppression du post (le media associé serra supprimé par un hook)
             post.destroy()
                 .then(() => res.status(200).json({message: 'Post supprimé !'}))
                 .catch(error => res.status(400).json({error}));

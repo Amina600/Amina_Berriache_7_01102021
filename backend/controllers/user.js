@@ -13,6 +13,7 @@ const encryptEmail = (string) => {
 };
 
 exports.signup = async (req, res, next) => {
+    // Récupération de la requête
     const body = req.body;
     // Vérifie si le mot de passe est correcte
     if (body.password.length < 6 || body.password.length > 250) {
@@ -40,7 +41,7 @@ exports.signup = async (req, res, next) => {
         return;
     }
 
-    // Création du user
+   // Hasher le mot de passe
     bcrypt.hash(body.password, 10)
         .then(hash => {
             const user = {
@@ -49,6 +50,7 @@ exports.signup = async (req, res, next) => {
                 password: hash,
                 isAdmin: false
             };
+            // Création du user
             db.sequelize.models.User.create(user)
                 .then(() => res.status(201).json({message: 'Utilisateur créé !'}))
                 .catch(error => res.status(500).json({error}) );
@@ -59,9 +61,9 @@ exports.signup = async (req, res, next) => {
         });
 };
 
-exports.login = (req, res) => {
-
-    db.sequelize.models.User.findOne({
+exports.login = async (req, res) => {
+    // Retrouver l'email
+    await db.sequelize.models.User.findOne({
         where: {
             email: encryptEmail(req.body.email)
         }

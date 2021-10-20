@@ -80,18 +80,20 @@
                 try {
                     await axios.post("post/comment", {comment})
                     this.message = null;
+                    // Recharge des commentaires
                     this.getAllComments();
+                    // Mise à jour du nombre de commentaire
                     this.updateCommentCount(1);
 
                 } catch (error) {
-                    console.log(error)
+                    console.error(error)
                 }
             },
             getAllComments: function() {
                 try {
                     axios.get(`post/${this.post.id}/comment`)
                         .then((response) => {
-                            console.log(response)
+                            // Formatage de la date des commentaires
                             this.comments = response.data.map((comment) => {
                                 return {
                                     ...comment,
@@ -107,6 +109,7 @@
                 try {
                     axios.delete("post/comment/" + commentId)
                         .then(() => {
+                            // Suppression du commentaire dans la liste
                             this.comments.splice(index, 1);
                             this.updateCommentCount(-1);
                         })

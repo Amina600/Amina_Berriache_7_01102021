@@ -110,6 +110,7 @@
                 category: 'RECENT'
             }
         },
+        // Chargement des posts en changement de la page
         created() {
             this.getAllPost();
         },
@@ -122,6 +123,7 @@
             toggleMenu: function (postId) {
                 this.showMenu[postId] = !this.showMenu[postId];
             },
+            // // Toggle commentaire popup
             toggleComment: function (postId) {
                 this.showComments[postId] = !this.showComments[postId];
             },
@@ -129,6 +131,7 @@
                 try {
                     axios.get("post/"+ this.category)
                         .then((response) => {
+                            // Formatage de la date des commentaires
                             this.posts = response.data.map((post) => {
                                 return {
                                     ...post,
@@ -158,13 +161,13 @@
                 try {
                     axios.post(`post/like/${post.id}`, {action})
                         .then(() => {
+                            // Simule en local le changement en back-end
                             let likeCount = post.likeCount;
                             let dislikeCount = post.dislikeCount;
                             let iLiked = post.iLiked;
                             let iDisliked = post.iDisliked;
 
                             if (action === 1) {
-
                                 likeCount++;
                                 iLiked = true;
 
@@ -174,7 +177,6 @@
                                 }
 
                             } else if (action === -1) {
-
                                 dislikeCount++;
                                 iDisliked = true;
 
@@ -186,18 +188,18 @@
                                 if (iLiked) {
                                     likeCount--;
                                     iLiked = false;
+
                                 } else {
                                     dislikeCount--;
                                     iDisliked = false;
                                 }
                             }
-
+                            // Mise à jour des likes
                             this.posts[index] = {...post, likeCount, dislikeCount, iLiked, iDisliked};
                         });
 
                 } catch (error) {
                     console.error(error)
-
                 }
             },
             updateCommentCount(count, index) {
@@ -432,7 +434,7 @@
         }
     }
 
-    @media screen and (max-width: 768px) {
+    @media screen and (max-width: 992px) {
 
         .btn-category {
             margin-bottom: 10px;

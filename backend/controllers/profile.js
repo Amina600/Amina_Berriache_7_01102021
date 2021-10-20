@@ -2,6 +2,7 @@ const db = require('../models');
 const fs = require('fs');
 const bcrypt = require('bcrypt');
 
+// Enregistrement la photo de profile dans la table Users
 exports.postPhoto = async (req, res, next) => {
     // retrouver le user
     const user = await db.sequelize.models.User.findOne({
@@ -10,6 +11,8 @@ exports.postPhoto = async (req, res, next) => {
         }
     })
     const profileUrl = req.file ? `${req.protocol}://${req.get('host')}/images/${req.file.filename}` : null;
+
+    // Suppression de l'ancien media
     if (user.profileUrl) {
         const filename = user.profileUrl.split('/images/')[1];
         fs.unlink(`images/${filename}`, () => {
@@ -20,6 +23,7 @@ exports.postPhoto = async (req, res, next) => {
     }
 }
 
+// Mise a jour d'un user
 function updateUser(user, profileUrl, res) {
     user.update({profileUrl})
         .then(() => res.status(201).json({message: 'Photo de profile est à jour !', profileUrl}))
@@ -29,6 +33,7 @@ function updateUser(user, profileUrl, res) {
         });
 }
 
+// Mettre à jour le pseudo
 exports.updatePseudo = async (req, res, next) => {
     // Retrouver le user
     const user = await db.sequelize.models.User.findOne({
@@ -36,14 +41,14 @@ exports.updatePseudo = async (req, res, next) => {
             id: req.auth.userId,
         }
     })
-    // Retrouver le pseudo dans la BD
+    // Retrouver le pseudo dans la table Users
     const pseudo = req.body.pseudo;
     const pseudoExists = await db.sequelize.models.User.findOne({
         where: {
             pseudo: pseudo,
         }
     });
-    // Vérifier si le pseudo est déjà dans la BD
+    // Vérifier si le pseudo est déjà dans la table
     if (pseudoExists) {
         res.status(400).json({message: "Ce pseudo est déjà pris !"});
 
@@ -58,7 +63,7 @@ exports.updatePseudo = async (req, res, next) => {
     }
 }
 
-
+// Mettre à jour le mot de passe
 exports.updatePassword = async (req, res) => {
     // Retrouver le user
     const user = await db.sequelize.models.User.findOne({
@@ -87,9 +92,11 @@ exports.updatePassword = async (req, res) => {
             }
         }).catch(error => res.status(500).json({error}));
 }
-
+// Suppression du compte
 exports.deleteCompte = (req, res) => {
 
+    // La suppression des posts, likes et commentaires se ferra en cascade
+    // La suppression du media associé serra supprimé par un hook
     db.sequelize.models.User.findOne({
         where: {
             id: req.auth.userId
@@ -100,8 +107,6 @@ exports.deleteCompte = (req, res) => {
             .catch(error => res.status(500).json({error}));
     })
         .catch(error => res.status(500).json({error}));
-
-
 }
 
 

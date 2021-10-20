@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-
 const auth = require('../middlewares/auth');
 const multer = require('../middlewares/multer-config');
 const postCtrl = require('../controllers/post');
@@ -14,17 +13,12 @@ router.post('/', auth, multer, postCtrl.createPost);
 // Récupérer tous les posts
 router.get('/:category', auth, postCtrl.getAllPosts);
 //
-// Récupérer tous les posts
-router.get('/populaire', auth, postCtrl.getAllPostsPopulaire);
-//
 // Mettre à jour un post
  router.put('/', auth, multer, postCtrl.updatePost);
 //
 // Suppression un post
  router.delete('/:id', auth, postCtrl.deletePost);
 //
-
-
 
 //-------------COMMENTAIRES------------
 //Créer un post et enregistrement dans la base des données

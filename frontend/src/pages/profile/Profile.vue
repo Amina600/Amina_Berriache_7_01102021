@@ -554,7 +554,7 @@
 
         }
     }
-    @media screen and (min-width: 576px) and (max-width: 768px) {
+    @media screen and (min-width: 576px) and (max-width: 992px) {
         .container {
             .row {
                 justify-content: center;

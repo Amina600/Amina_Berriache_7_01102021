@@ -1,8 +1,9 @@
 const db = require('../models');
 
+// Creation commentaire
 exports.postComment = async (req, res, next) => {
-    console.log(req.body)
     const commentObject = req.body.comment;
+
     if (commentObject == null) {
         return res.status(400).send({
             message: "Votre message createPost ne peut pas être vide"
@@ -13,7 +14,7 @@ exports.postComment = async (req, res, next) => {
         userId: req.auth.userId,
     }
 
-//Enregistre le post dans la base de données
+    // Enregistrement du nouveau commentaire dans la base de données
     await db.sequelize.models.Comment.create(newComment)
         .then(() => res.status(201).json({message: 'commentaire enregistré !'}))
         .catch(function (err) {
@@ -22,12 +23,15 @@ exports.postComment = async (req, res, next) => {
         });
 };
 
+//  Récupération de tous les commentaires
 exports.getAllComments = async (req, res, next) => {
     const postId = parseInt(req.params.id)
+
     await db.sequelize.models.Comment.findAll({
         order: [
             ['createdAt', 'ASC'],
         ],
+        // Ajout du model User
         include: [
             "User"
         ],
@@ -43,9 +47,11 @@ exports.getAllComments = async (req, res, next) => {
         });
 };
 
-exports.deleteComment = (req, res, next) => {
+// Suppression du commentaire
+exports.deleteComment = async (req, res, next) => {
     const commentId = parseInt(req.params.id)
-    db.sequelize.models.Comment.findOne({
+
+    await db.sequelize.models.Comment.findOne({
         where: {
             id: commentId
         }
@@ -58,13 +64,12 @@ exports.deleteComment = (req, res, next) => {
                 });
                 return;
             }
-            // Suppression du média
+            // Suppression du commentaire
             db.sequelize.models.Comment.destroy({
                 where: {
                     id: commentId
                 }
             })
-
                 .then(() => res.status(200).json({message: 'Commentaire supprimé supprimé !'}))
                 .catch(error => res.status(400).json({error}));
         })

@@ -101,6 +101,7 @@
                         email: this.email,
                         password: this.password
                     })
+                    // Après avoir envoyé le post, la popup se ferme
                     this.toggleRegisterPopup();
                 } catch (error) {
                     if (error.response.status === 400) this.signUpError = error.response.data.message;

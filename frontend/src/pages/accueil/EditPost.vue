@@ -72,17 +72,19 @@
             }
         },
         methods: {
-            // Télécharger les photos
+            // Téléchargement du fichier
             onFileChange(e) {
                 this.file = e.target.files[0];
                 this.url = URL.createObjectURL(this.file);
                 this.fileType = this.getFileType(this.file.name);
             },
+            // Suppression du fichier
             clear: function () {
                 this.url = ''
                 this.$refs.fileUpload.value = null;
                 this.deleteFile = true;
             },
+            // Détermine le type du fichier à partir de l'extension
             getFileType: function(name) {
                 if (!name) return null;
                 else if (name.slice(-3) === 'mp4') return 'VIDEO';
@@ -90,10 +92,10 @@
             },
             savePost: async function () {
                 let post = {
-                    id: this.postToEdit?.id,
+                    id: this.postToEdit?.id, // Ajout de l'id si en mode edit
                     content: this.content,
                     userId: this.user.id,
-                    deleteFile: this.deleteFile
+                    deleteFile: this.deleteFile // Ce boolean demande la suppression du média
                 };
 
                 // Request
@@ -103,14 +105,14 @@
                     fd.append('post', JSON.stringify(post));
                     fd.append('file', this.file);
 
-                    // TODO put or post
+                    // Si postToEdit => edit sinon create
                     if (this.postToEdit) {
                         await axios.put("post/", fd, config);
                     } else {
-
                         await axios.post("post/", fd, config);
                     }
 
+                    // Recharger la page
                     this.$router.go();
                 } catch (error) {
                     console.log(error)
@@ -292,7 +294,7 @@
         }
     }
 
-    @media screen and (max-width: 450px) {
+    @media screen and (max-width: 550px) {
         .bloc-post {
            .overlay{
                background-color: white;
