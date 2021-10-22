@@ -33,7 +33,7 @@ exports.getAllComments = async (req, res, next) => {
         ],
         // Ajout du model User
         include: [
-            "User"
+            {model: db.sequelize.models.User, attributes: ['id', 'pseudo', 'profileUrl']},
         ],
         where: {
             postId: postId,
