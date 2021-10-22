@@ -220,6 +220,7 @@
                     this.newPassword = null;
                     this.v$.password.$reset();
                     this.v$.newPassword.$reset();
+                    this.$router.go();
                 } catch (error) {
                     if (error.response.status === 400) {
                         this.signUpErrorPassword = error.response.data.message;
