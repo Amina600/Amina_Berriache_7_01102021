@@ -40,19 +40,18 @@ exports.getAllPosts = async (req, res, next) => {
         order = [db.Sequelize.literal('likeCount'), 'DESC']; // En fonction du nombre de likes
     }
 
-    await db.sequelize.models.Post.findAll({
+    const comments = await db.sequelize.models.Comment.findAll({});
+
+    db.sequelize.models.Post.findAll({
         order: [
             order,
         ],
         include: [
-            "User",
-            {model: db.sequelize.models.Comment, attributes: []},
+            {model: db.sequelize.models.User, attributes: ['id', 'pseudo', 'profileUrl']},
             {model: db.sequelize.models.Like, attributes: []},
         ],
         attributes: {
             include: [
-                // Compte le nombre de commentaire
-                [db.Sequelize.fn("COUNT", db.Sequelize.col('Comments.id')), "commentCount"],
                 // Compte le nombre de likes
                 [db.Sequelize.fn("SUM", db.Sequelize.literal("if(`Likes`.`isLike` = 1, 1, 0)")), "likeCount"],
                 // Compte le nombre de dislikes
@@ -74,6 +73,11 @@ exports.getAllPosts = async (req, res, next) => {
         group: ['Post.id']
     })
         .then((newPost) => {
+            // Ajoute commentCount pour chaque post en filtrant les comments
+            newPost = newPost.map((post) => {
+                post.dataValues.commentCount = comments.filter((comment) => comment.postId === post.id).length;
+                return post;
+            })
             res.status(200).json(newPost);
         })
 };
