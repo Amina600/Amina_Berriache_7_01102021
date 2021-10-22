@@ -12,7 +12,7 @@
 
                         <img v-if="url || myUser.profileUrl" :src="url || myUser.profileUrl"/>
                         <div v-else>
-                            <img src="../../../src/assets/photo-profile.png" alt="photo de profile" class="imgDefault">
+                            <img src="../../../src/assets/profile.jpeg" alt="photo de profile" class="imgDefault">
                         </div>
 
                     </div>
@@ -338,8 +338,8 @@
 
                 .container-photo {
                     width: 335px;
-                    height: 345px;
-                    margin: 10px 0;
+                    height: 335px;
+                    margin: 12px 0;
                     overflow: hidden;
                     border: 1px solid lighten(#fbf0f0, 1%);
                     background-color: lighten(#fbf0f0, 1%);
@@ -349,7 +349,7 @@
 
 
                     img {
-                        width: 100%;
+                        max-width: 100%;
                         object-fit: cover;
                         border-radius: 5px;
                     }

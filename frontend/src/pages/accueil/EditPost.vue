@@ -300,10 +300,11 @@
                background-color: white;
            }
             .post {
-
                 top: 0;
-                max-width: 100vw !important;
+                max-width: 120vw !important;
                 height: 100% !important;
+                width: 100% !important;
+                box-shadow: none;
 
                 .content {
                     .layout {
