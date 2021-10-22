@@ -27,6 +27,7 @@ module.exports = {
         }
       },
       isLike: {
+        allowNull: false,
         type: Sequelize.BOOLEAN
       },
       createdAt: {
